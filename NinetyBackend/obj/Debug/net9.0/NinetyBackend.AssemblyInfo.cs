@@ -14,7 +14,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("NinetyBackend")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+1c4c154694b684ed84e08e9a1a85f05430d58b63")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+cb2761e023f0464c2d261b0b7022496cca4b37d4")]
 [assembly: System.Reflection.AssemblyProductAttribute("NinetyBackend")]
 [assembly: System.Reflection.AssemblyTitleAttribute("NinetyBackend")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]
