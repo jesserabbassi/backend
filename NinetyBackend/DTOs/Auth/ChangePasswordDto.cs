@@ -1,4 +1,0 @@
-﻿namespace NinetyBackend.DTOs.Auth
-{
-       public record ChangePasswordDto(string CurrentPassword, string NewPassword);
-}

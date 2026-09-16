@@ -1,0 +1,13 @@
+## .NET / Visual Studio
+bin/
+obj/
+*.user
+*.userosscache
+*.sln.docstates
+.vs/
+.vscode/
+
+## Environment & Secrets
+.env
+.env.*
+!.env.example
