@@ -1,6 +1,6 @@
 ﻿namespace NinetyBackend.Services.Auth
 {
-    public interface IAuthService
+    public class OtpService
     {
     }
 }
