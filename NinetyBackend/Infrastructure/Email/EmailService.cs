@@ -29,7 +29,12 @@ public class EmailService : IEmailService
         var portStr = _configuration["SMTP_PORT"] ?? _configuration["Smtp:Port"];
         var username = _configuration["SMTP_USERNAME"] ?? _configuration["Smtp:Username"];
         var password = _configuration["SMTP_PASSWORD"] ?? _configuration["Smtp:Password"];
-        var from = _configuration["SMTP_FROM"] ?? _configuration["Smtp:From"];
+        var fromAddress = _configuration["SMTP_FROM"] ?? _configuration["Smtp:From"];
+
+        if (string.IsNullOrEmpty(fromAddress))
+        {
+            fromAddress = "noreply@ninetygaming.com";
+        }
 
         if (string.IsNullOrEmpty(host))
         {
@@ -40,8 +45,7 @@ public class EmailService : IEmailService
         int port = int.TryParse(portStr, out var p) ? p : 587;
 
         var message = new MimeMessage();
-
-        message.From.Add(MailboxAddress.Parse(from));
+        message.From.Add(MailboxAddress.Parse(fromAddress));
         message.To.Add(MailboxAddress.Parse(to));
         message.Subject = subject;
 

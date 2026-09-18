@@ -24,7 +24,7 @@ public class AuthService : IAuthService
         _refreshTokenRepository = refreshTokenRepository;
     }
 
-    public async Task<AuthResponseDto> RegisterAsync(LoginDto dto)
+    public async Task<AuthResponseDto> RegisterAsync(RegisterDto dto)
     {
         var existing = await _userRepository.GetByEmailAsync(dto.Email);
         if (existing != null)
@@ -35,6 +35,8 @@ public class AuthService : IAuthService
         var user = new User
         {
             Id = Guid.NewGuid(),
+            FirstName = dto.FirstName,
+            LastName = dto.LastName,
             Email = dto.Email,
             PasswordHash = SecurityUtils.HashPassword(dto.Password),
             IsVerified = false,

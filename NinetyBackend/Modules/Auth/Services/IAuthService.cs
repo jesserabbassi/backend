@@ -5,7 +5,7 @@ namespace NinetyBackend.Modules.Auth.Services;
 
 public interface IAuthService
 {
-    Task<AuthResponseDto> RegisterAsync(LoginDto dto);
+    Task<AuthResponseDto> RegisterAsync(RegisterDto dto);
     Task<AuthResponseDto> LoginAsync(LoginDto dto, string? ipAddress = null);
     Task<AuthResponseDto?> VerifyOtpAsync(VerifyOtpDto dto, string? ipAddress = null);
     Task<AuthResponseDto?> RefreshTokenAsync(string rawRefreshToken, string? ipAddress = null);

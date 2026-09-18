@@ -22,10 +22,11 @@ public class UserRepository : IUserRepository
 
     public Task<User?> GetByEmailAsync(string email)
     {
-        return _db.Users
+       var user =  _db.Users
             .Include(x => x.Roles)
             .FirstOrDefaultAsync(x =>
                 x.Email.ToLower() == email.ToLower());
+        return user;
     }
 
     public Task<User?> GetWithRolesAsync(Guid id)

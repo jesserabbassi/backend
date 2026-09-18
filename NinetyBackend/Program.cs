@@ -1,37 +1,62 @@
 using System.Text;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using NinetyBackend.Infrastructure.Authentication;
+using NinetyBackend.Infrastructure.Configuration;
 using NinetyBackend.Infrastructure.Database;
 using NinetyBackend.Infrastructure.Email;
 using NinetyBackend.Modules.Auth.Repositories;
 using NinetyBackend.Modules.Auth.Services;
+using Swashbuckle.AspNetCore.Swagger;
+using Swashbuckle.AspNetCore.SwaggerUI;
+
+// 1. Parse .env file before builder setup
+var envData = DotEnv.Load(".env");
 
 var builder = WebApplication.CreateBuilder(args);
 
-// 1. Add Environment Variables Configuration
+// 2. Load .env data and expand %VAR% / ${VAR} placeholders from appsettings.json
+builder.Configuration.AddInMemoryCollection(envData);
 builder.Configuration.AddEnvironmentVariables();
 
-// 2. Database Context Configuration (Supabase PostgreSQL via Npgsql)
-var connectionString = builder.Configuration["SUPABASE_CONNECTION_STRING"]
-    ?? builder.Configuration.GetConnectionString("DefaultConnection")
-    ?? "Host=localhost;Database=ninety_db;Username=postgres;Password=postgres";
+var expandedPlaceholders = DotEnv.ExpandPlaceholders(builder.Configuration, envData);
+builder.Configuration.AddInMemoryCollection(expandedPlaceholders);
+
+// 3. Database Context Configuration (Supabase PostgreSQL via Npgsql)
+var connectionString =
+    builder.Configuration.GetConnectionString("DefaultConnection");
+
+Console.WriteLine(
+    $"Connection string configured: {!string.IsNullOrWhiteSpace(connectionString)}"
+);
 
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
     options.UseNpgsql(connectionString));
 
-// 3. Configure JwtOptions
+// 4. Configure JwtOptions from environment / appsettings
 builder.Services.Configure<JwtOptions>(options =>
 {
-    options.Issuer = builder.Configuration["JWT_ISSUER"] ?? "NinetyBackend";
-    options.Audience = builder.Configuration["JWT_AUDIENCE"] ?? "NinetyBackendClient";
-    options.SecretKey = builder.Configuration["JWT_SECRET_KEY"] ?? "SuperSecretDefaultKeyMustBeAtLeast32BytesLongForSecurity!";
-    options.AccessTokenMinutes = int.TryParse(builder.Configuration["JWT_ACCESS_TOKEN_MINUTES"], out var m) ? m : 15;
-    options.RefreshTokenDays = int.TryParse(builder.Configuration["JWT_REFRESH_TOKEN_DAYS"], out var d) ? d : 30;
+    var issuer = builder.Configuration["JWT_ISSUER"] ?? builder.Configuration["Jwt:Issuer"];
+    options.Issuer = string.IsNullOrEmpty(issuer) || issuer.StartsWith('%') ? "NinetyBackend" : issuer;
+
+    var audience = builder.Configuration["JWT_AUDIENCE"] ?? builder.Configuration["Jwt:Audience"];
+    options.Audience = string.IsNullOrEmpty(audience) || audience.StartsWith('%') ? "NinetyBackendClient" : audience;
+
+    var secretKey = builder.Configuration["JWT_SECRET_KEY"] ?? builder.Configuration["Jwt:SecretKey"];
+    options.SecretKey = string.IsNullOrEmpty(secretKey) || secretKey.StartsWith('%')
+        ? "SuperSecretDefaultKeyMustBeAtLeast32BytesLongForSecurity!"
+        : secretKey;
+
+    var accessMin = builder.Configuration["JWT_ACCESS_TOKEN_MINUTES"] ?? builder.Configuration["Jwt:AccessTokenMinutes"];
+    options.AccessTokenMinutes = int.TryParse(accessMin, out var m) ? m : 15;
+
+    var refreshDays = builder.Configuration["JWT_REFRESH_TOKEN_DAYS"] ?? builder.Configuration["Jwt:RefreshTokenDays"];
+    options.RefreshTokenDays = int.TryParse(refreshDays, out var d) ? d : 30;
 });
 
-// 4. Register Repositories & Services in DI
+// 5. Register Repositories & Services in DI Container
 builder.Services.AddScoped<IUserRepository, UserRepository>();
 builder.Services.AddScoped<IOtpRepository, OtpRepository>();
 builder.Services.AddScoped<IRefreshTokenRepository, RefreshTokenRepository>();
@@ -44,9 +69,17 @@ builder.Services.AddScoped<IOAuthService, OAuthService>();
 builder.Services.AddScoped<IAuthorizationService, AuthorizationService>();
 builder.Services.AddScoped<IAuthService, AuthService>();
 
-// 5. Configure Authentication (JWT + Google OAuth)
-var jwtSecretKey = builder.Configuration["JWT_SECRET_KEY"]
-    ?? "SuperSecretDefaultKeyMustBeAtLeast32BytesLongForSecurity!";
+// 6. Configure Authentication (JWT Bearer + Google OAuth)
+var rawSecretKey = builder.Configuration["JWT_SECRET_KEY"] ?? builder.Configuration["Jwt:SecretKey"];
+var jwtSecretKey = string.IsNullOrEmpty(rawSecretKey) || rawSecretKey.StartsWith('%')
+    ? "SuperSecretDefaultKeyMustBeAtLeast32BytesLongForSecurity!"
+    : rawSecretKey;
+
+var rawIssuer = builder.Configuration["JWT_ISSUER"] ?? builder.Configuration["Jwt:Issuer"];
+var jwtIssuer = string.IsNullOrEmpty(rawIssuer) || rawIssuer.StartsWith('%') ? "NinetyBackend" : rawIssuer;
+
+var rawAudience = builder.Configuration["JWT_AUDIENCE"] ?? builder.Configuration["Jwt:Audience"];
+var jwtAudience = string.IsNullOrEmpty(rawAudience) || rawAudience.StartsWith('%') ? "NinetyBackendClient" : rawAudience;
 
 builder.Services.AddAuthentication(options =>
 {
@@ -61,8 +94,8 @@ builder.Services.AddAuthentication(options =>
         ValidateAudience = true,
         ValidateLifetime = true,
         ValidateIssuerSigningKey = true,
-        ValidIssuer = builder.Configuration["JWT_ISSUER"] ?? "NinetyBackend",
-        ValidAudience = builder.Configuration["JWT_AUDIENCE"] ?? "NinetyBackendClient",
+        ValidIssuer = jwtIssuer,
+        ValidAudience = jwtAudience,
         IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtSecretKey))
     };
 
@@ -80,20 +113,25 @@ builder.Services.AddAuthentication(options =>
 })
 .AddGoogle(googleOptions =>
 {
-    googleOptions.ClientId = builder.Configuration["GOOGLE_CLIENT_ID"] ?? "dummy-google-client-id";
-    googleOptions.ClientSecret = builder.Configuration["GOOGLE_CLIENT_SECRET"] ?? "dummy-google-client-secret";
+    var clientId = builder.Configuration["GOOGLE_CLIENT_ID"] ?? builder.Configuration["Authentication:Google:ClientId"];
+    googleOptions.ClientId = string.IsNullOrEmpty(clientId) || clientId.StartsWith('%') ? "dummy-google-client-id" : clientId;
+
+    var clientSecret = builder.Configuration["GOOGLE_CLIENT_SECRET"] ?? builder.Configuration["Authentication:Google:ClientSecret"];
+    googleOptions.ClientSecret = string.IsNullOrEmpty(clientSecret) || clientSecret.StartsWith('%') ? "dummy-google-client-secret" : clientSecret;
 });
 
-// 6. Controllers & OpenAPI
+// 7. Add Controllers & OpenAPI
 builder.Services.AddControllers();
-builder.Services.AddOpenApi();
+builder.Services.AddEndpointsApiExplorer();
+builder.Services.AddSwaggerGen();
 
 var app = builder.Build();
 
-// 7. Pipeline Configuration
+// 8. Pipeline Configuration
 if (app.Environment.IsDevelopment())
 {
-    app.MapOpenApi();
+    app.UseSwagger();
+    app.UseSwaggerUI();
 }
 
 app.UseHttpsRedirection();
