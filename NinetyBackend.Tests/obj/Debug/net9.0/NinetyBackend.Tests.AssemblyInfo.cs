@@ -13,7 +13,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("NinetyBackend.Tests")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+15d5c789443e3ebcceab4188defcb26691f1a8de")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+e708410160b15126926f9bc8e92feefe91b14775")]
 [assembly: System.Reflection.AssemblyProductAttribute("NinetyBackend.Tests")]
 [assembly: System.Reflection.AssemblyTitleAttribute("NinetyBackend.Tests")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

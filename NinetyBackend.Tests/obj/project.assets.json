@@ -1,5 +1,5 @@
 {
-  "version": 3,
+  "version": 4,
   "targets": {
     "net9.0": {
       "BCrypt.Net-Next/4.0.3": {
@@ -219,6 +219,24 @@
       },
       "Microsoft.EntityFrameworkCore.Analyzers/9.0.20": {
         "type": "package"
+      },
+      "Microsoft.EntityFrameworkCore.InMemory/9.0.20": {
+        "type": "package",
+        "dependencies": {
+          "Microsoft.EntityFrameworkCore": "9.0.20",
+          "Microsoft.Extensions.Caching.Memory": "9.0.20",
+          "Microsoft.Extensions.Logging": "9.0.20"
+        },
+        "compile": {
+          "lib/net8.0/Microsoft.EntityFrameworkCore.InMemory.dll": {
+            "related": ".xml"
+          }
+        },
+        "runtime": {
+          "lib/net8.0/Microsoft.EntityFrameworkCore.InMemory.dll": {
+            "related": ".xml"
+          }
+        }
       },
       "Microsoft.EntityFrameworkCore.Relational/9.0.1": {
         "type": "package",
@@ -1714,6 +1732,21 @@
         "microsoft.entityframeworkcore.analyzers.nuspec"
       ]
     },
+    "Microsoft.EntityFrameworkCore.InMemory/9.0.20": {
+      "sha512": "68lDphjXUSPNsU7GGcVw/e7S2ewTqcPxJyE7lJ/Hbhw/+pmYcw0slVuEtZuAXr023Tj1x52fl4LcxEuzvO+7JQ==",
+      "type": "package",
+      "path": "microsoft.entityframeworkcore.inmemory/9.0.20",
+      "files": [
+        ".nupkg.metadata",
+        ".signature.p7s",
+        "Icon.png",
+        "PACKAGE.md",
+        "lib/net8.0/Microsoft.EntityFrameworkCore.InMemory.dll",
+        "lib/net8.0/Microsoft.EntityFrameworkCore.InMemory.xml",
+        "microsoft.entityframeworkcore.inmemory.9.0.20.nupkg.sha512",
+        "microsoft.entityframeworkcore.inmemory.nuspec"
+      ]
+    },
     "Microsoft.EntityFrameworkCore.Relational/9.0.1": {
       "sha512": "7Iu0h4oevRvH4IwPzmxuIJGYRt55TapoREGlluk75KCO7lenN0+QnzCl6cQDY48uDoxAUpJbpK2xW7o8Ix69dw==",
       "type": "package",
@@ -3169,6 +3202,7 @@
   },
   "projectFileDependencyGroups": {
     "net9.0": [
+      "Microsoft.EntityFrameworkCore.InMemory >= 9.0.20",
       "Microsoft.NET.Test.Sdk >= 17.12.0",
       "Moq >= 4.20.72",
       "NinetyBackend >= 1.0.0",
@@ -3178,23 +3212,23 @@
     ]
   },
   "packageFolders": {
-    "C:\\Users\\USER\\.nuget\\packages\\": {},
+    "C:\\Users\\user\\.nuget\\packages\\": {},
     "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages": {}
   },
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "C:\\Users\\USER\\Documents\\CSTAM\\future-owners\\backend\\NinetyBackend\\NinetyBackend.Tests\\NinetyBackend.Tests.csproj",
+      "projectUniqueName": "C:\\Users\\user\\OneDrive\\Documents\\GitHub\\backend\\NinetyBackend.Tests\\NinetyBackend.Tests.csproj",
       "projectName": "NinetyBackend.Tests",
-      "projectPath": "C:\\Users\\USER\\Documents\\CSTAM\\future-owners\\backend\\NinetyBackend\\NinetyBackend.Tests\\NinetyBackend.Tests.csproj",
-      "packagesPath": "C:\\Users\\USER\\.nuget\\packages\\",
-      "outputPath": "C:\\Users\\USER\\Documents\\CSTAM\\future-owners\\backend\\NinetyBackend\\NinetyBackend.Tests\\obj\\",
+      "projectPath": "C:\\Users\\user\\OneDrive\\Documents\\GitHub\\backend\\NinetyBackend.Tests\\NinetyBackend.Tests.csproj",
+      "packagesPath": "C:\\Users\\user\\.nuget\\packages\\",
+      "outputPath": "C:\\Users\\user\\OneDrive\\Documents\\GitHub\\backend\\NinetyBackend.Tests\\obj\\",
       "projectStyle": "PackageReference",
       "fallbackFolders": [
         "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
       ],
       "configFilePaths": [
-        "C:\\Users\\USER\\AppData\\Roaming\\NuGet\\NuGet.Config",
+        "C:\\Users\\user\\AppData\\Roaming\\NuGet\\NuGet.Config",
         "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.FallbackLocation.config",
         "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
       ],
@@ -3208,10 +3242,11 @@
       },
       "frameworks": {
         "net9.0": {
+          "framework": "net9.0",
           "targetAlias": "net9.0",
           "projectReferences": {
-            "C:\\Users\\USER\\Documents\\CSTAM\\future-owners\\backend\\NinetyBackend\\NinetyBackend\\NinetyBackend.csproj": {
-              "projectPath": "C:\\Users\\USER\\Documents\\CSTAM\\future-owners\\backend\\NinetyBackend\\NinetyBackend\\NinetyBackend.csproj"
+            "C:\\Users\\user\\OneDrive\\Documents\\GitHub\\backend\\NinetyBackend\\NinetyBackend.csproj": {
+              "projectPath": "C:\\Users\\user\\OneDrive\\Documents\\GitHub\\backend\\NinetyBackend\\NinetyBackend.csproj"
             }
           }
         }
@@ -3226,12 +3261,17 @@
         "auditLevel": "low",
         "auditMode": "direct"
       },
-      "SdkAnalysisLevel": "9.0.300"
+      "SdkAnalysisLevel": "10.0.400"
     },
     "frameworks": {
       "net9.0": {
+        "framework": "net9.0",
         "targetAlias": "net9.0",
         "dependencies": {
+          "Microsoft.EntityFrameworkCore.InMemory": {
+            "target": "Package",
+            "version": "[9.0.20, )"
+          },
           "Microsoft.NET.Test.Sdk": {
             "target": "Package",
             "version": "[17.12.0, )"
@@ -3264,12 +3304,26 @@
         ],
         "assetTargetFallback": true,
         "warn": true,
+        "downloadDependencies": [
+          {
+            "name": "Microsoft.AspNetCore.App.Ref",
+            "version": "[9.0.20, 9.0.20]"
+          },
+          {
+            "name": "Microsoft.NETCore.App.Ref",
+            "version": "[9.0.20, 9.0.20]"
+          },
+          {
+            "name": "Microsoft.WindowsDesktop.App.Ref",
+            "version": "[9.0.20, 9.0.20]"
+          }
+        ],
         "frameworkReferences": {
           "Microsoft.NETCore.App": {
             "privateAssets": "all"
           }
         },
-        "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\9.0.311/PortableRuntimeIdentifierGraph.json"
+        "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\10.0.401/PortableRuntimeIdentifierGraph.json"
       }
     }
   }

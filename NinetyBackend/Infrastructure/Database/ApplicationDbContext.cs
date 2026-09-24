@@ -1,5 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 using NinetyBackend.Modules.Auth.Models;
+using NinetyBackend.Modules.MonitoringAlerts.Models;
 using NinetyBackend.Modules.Stations.Models;
 
 namespace NinetyBackend.Infrastructure.Database;
@@ -20,6 +21,8 @@ public class ApplicationDbContext : DbContext
     public DbSet<AuditLog> AuditLogs => Set<AuditLog>();
     public DbSet<GamingStation> GamingStations => Set<GamingStation>();
     public DbSet<Agent> Agents => Set<Agent>();
+    public DbSet<Telemetry> Telemetries => Set<Telemetry>();
+    public DbSet<Alert> Alerts => Set<Alert>();
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -91,6 +94,23 @@ public class ApplicationDbContext : DbContext
             entity.Property(e => e.MachineName).IsRequired();
             entity.Property(e => e.Version).IsRequired();
             entity.Property(e => e.Status).HasConversion<string>();
+        });
+
+        modelBuilder.Entity<Telemetry>(entity =>
+        {
+            entity.HasKey(e => e.Id);
+            entity.HasIndex(e => new { e.StationId, e.Timestamp });
+            entity.Property(e => e.NetworkStatus).HasMaxLength(128);
+            entity.Property(e => e.Timestamp).IsRequired();
+        });
+
+        modelBuilder.Entity<Alert>(entity =>
+        {
+            entity.HasKey(e => e.Id);
+            entity.HasIndex(e => new { e.StationId, e.Type, e.ResolvedAt });
+            entity.Property(e => e.Message).IsRequired();
+            entity.Property(e => e.Type).HasConversion<string>();
+            entity.Property(e => e.Severity).HasConversion<string>();
         });
     }
 }

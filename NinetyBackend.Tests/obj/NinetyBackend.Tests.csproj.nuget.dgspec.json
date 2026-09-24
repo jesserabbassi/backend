@@ -1,23 +1,23 @@
 {
   "format": 1,
   "restore": {
-    "C:\\Users\\USER\\Documents\\CSTAM\\future-owners\\backend\\NinetyBackend\\NinetyBackend.Tests\\NinetyBackend.Tests.csproj": {}
+    "C:\\Users\\user\\OneDrive\\Documents\\GitHub\\backend\\NinetyBackend.Tests\\NinetyBackend.Tests.csproj": {}
   },
   "projects": {
-    "C:\\Users\\USER\\Documents\\CSTAM\\future-owners\\backend\\NinetyBackend\\NinetyBackend.Tests\\NinetyBackend.Tests.csproj": {
+    "C:\\Users\\user\\OneDrive\\Documents\\GitHub\\backend\\NinetyBackend.Tests\\NinetyBackend.Tests.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\USER\\Documents\\CSTAM\\future-owners\\backend\\NinetyBackend\\NinetyBackend.Tests\\NinetyBackend.Tests.csproj",
+        "projectUniqueName": "C:\\Users\\user\\OneDrive\\Documents\\GitHub\\backend\\NinetyBackend.Tests\\NinetyBackend.Tests.csproj",
         "projectName": "NinetyBackend.Tests",
-        "projectPath": "C:\\Users\\USER\\Documents\\CSTAM\\future-owners\\backend\\NinetyBackend\\NinetyBackend.Tests\\NinetyBackend.Tests.csproj",
-        "packagesPath": "C:\\Users\\USER\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\USER\\Documents\\CSTAM\\future-owners\\backend\\NinetyBackend\\NinetyBackend.Tests\\obj\\",
+        "projectPath": "C:\\Users\\user\\OneDrive\\Documents\\GitHub\\backend\\NinetyBackend.Tests\\NinetyBackend.Tests.csproj",
+        "packagesPath": "C:\\Users\\user\\.nuget\\packages\\",
+        "outputPath": "C:\\Users\\user\\OneDrive\\Documents\\GitHub\\backend\\NinetyBackend.Tests\\obj\\",
         "projectStyle": "PackageReference",
         "fallbackFolders": [
           "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
         ],
         "configFilePaths": [
-          "C:\\Users\\USER\\AppData\\Roaming\\NuGet\\NuGet.Config",
+          "C:\\Users\\user\\AppData\\Roaming\\NuGet\\NuGet.Config",
           "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.FallbackLocation.config",
           "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
         ],
@@ -31,10 +31,11 @@
         },
         "frameworks": {
           "net9.0": {
+            "framework": "net9.0",
             "targetAlias": "net9.0",
             "projectReferences": {
-              "C:\\Users\\USER\\Documents\\CSTAM\\future-owners\\backend\\NinetyBackend\\NinetyBackend\\NinetyBackend.csproj": {
-                "projectPath": "C:\\Users\\USER\\Documents\\CSTAM\\future-owners\\backend\\NinetyBackend\\NinetyBackend\\NinetyBackend.csproj"
+              "C:\\Users\\user\\OneDrive\\Documents\\GitHub\\backend\\NinetyBackend\\NinetyBackend.csproj": {
+                "projectPath": "C:\\Users\\user\\OneDrive\\Documents\\GitHub\\backend\\NinetyBackend\\NinetyBackend.csproj"
               }
             }
           }
@@ -49,12 +50,17 @@
           "auditLevel": "low",
           "auditMode": "direct"
         },
-        "SdkAnalysisLevel": "9.0.300"
+        "SdkAnalysisLevel": "10.0.400"
       },
       "frameworks": {
         "net9.0": {
+          "framework": "net9.0",
           "targetAlias": "net9.0",
           "dependencies": {
+            "Microsoft.EntityFrameworkCore.InMemory": {
+              "target": "Package",
+              "version": "[9.0.20, )"
+            },
             "Microsoft.NET.Test.Sdk": {
               "target": "Package",
               "version": "[17.12.0, )"
@@ -87,29 +93,43 @@
           ],
           "assetTargetFallback": true,
           "warn": true,
+          "downloadDependencies": [
+            {
+              "name": "Microsoft.AspNetCore.App.Ref",
+              "version": "[9.0.20, 9.0.20]"
+            },
+            {
+              "name": "Microsoft.NETCore.App.Ref",
+              "version": "[9.0.20, 9.0.20]"
+            },
+            {
+              "name": "Microsoft.WindowsDesktop.App.Ref",
+              "version": "[9.0.20, 9.0.20]"
+            }
+          ],
           "frameworkReferences": {
             "Microsoft.NETCore.App": {
               "privateAssets": "all"
             }
           },
-          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\9.0.311/PortableRuntimeIdentifierGraph.json"
+          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\10.0.401/PortableRuntimeIdentifierGraph.json"
         }
       }
     },
-    "C:\\Users\\USER\\Documents\\CSTAM\\future-owners\\backend\\NinetyBackend\\NinetyBackend\\NinetyBackend.csproj": {
+    "C:\\Users\\user\\OneDrive\\Documents\\GitHub\\backend\\NinetyBackend\\NinetyBackend.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\USER\\Documents\\CSTAM\\future-owners\\backend\\NinetyBackend\\NinetyBackend\\NinetyBackend.csproj",
+        "projectUniqueName": "C:\\Users\\user\\OneDrive\\Documents\\GitHub\\backend\\NinetyBackend\\NinetyBackend.csproj",
         "projectName": "NinetyBackend",
-        "projectPath": "C:\\Users\\USER\\Documents\\CSTAM\\future-owners\\backend\\NinetyBackend\\NinetyBackend\\NinetyBackend.csproj",
-        "packagesPath": "C:\\Users\\USER\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\USER\\Documents\\CSTAM\\future-owners\\backend\\NinetyBackend\\NinetyBackend\\obj\\",
+        "projectPath": "C:\\Users\\user\\OneDrive\\Documents\\GitHub\\backend\\NinetyBackend\\NinetyBackend.csproj",
+        "packagesPath": "C:\\Users\\user\\.nuget\\packages\\",
+        "outputPath": "C:\\Users\\user\\OneDrive\\Documents\\GitHub\\backend\\NinetyBackend\\obj\\",
         "projectStyle": "PackageReference",
         "fallbackFolders": [
           "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
         ],
         "configFilePaths": [
-          "C:\\Users\\USER\\AppData\\Roaming\\NuGet\\NuGet.Config",
+          "C:\\Users\\user\\AppData\\Roaming\\NuGet\\NuGet.Config",
           "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.FallbackLocation.config",
           "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
         ],
@@ -123,6 +143,7 @@
         },
         "frameworks": {
           "net9.0": {
+            "framework": "net9.0",
             "targetAlias": "net9.0",
             "projectReferences": {}
           }
@@ -137,10 +158,11 @@
           "auditLevel": "low",
           "auditMode": "direct"
         },
-        "SdkAnalysisLevel": "9.0.300"
+        "SdkAnalysisLevel": "10.0.400"
       },
       "frameworks": {
         "net9.0": {
+          "framework": "net9.0",
           "targetAlias": "net9.0",
           "dependencies": {
             "BCrypt.Net-Next": {
@@ -209,6 +231,24 @@
           ],
           "assetTargetFallback": true,
           "warn": true,
+          "downloadDependencies": [
+            {
+              "name": "Microsoft.AspNetCore.App.Ref",
+              "version": "[9.0.20, 9.0.20]"
+            },
+            {
+              "name": "Microsoft.NETCore.App.Host.win-x64",
+              "version": "[9.0.20, 9.0.20]"
+            },
+            {
+              "name": "Microsoft.NETCore.App.Ref",
+              "version": "[9.0.20, 9.0.20]"
+            },
+            {
+              "name": "Microsoft.WindowsDesktop.App.Ref",
+              "version": "[9.0.20, 9.0.20]"
+            }
+          ],
           "frameworkReferences": {
             "Microsoft.AspNetCore.App": {
               "privateAssets": "none"
@@ -217,7 +257,7 @@
               "privateAssets": "all"
             }
           },
-          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\9.0.311/PortableRuntimeIdentifierGraph.json"
+          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\10.0.401/PortableRuntimeIdentifierGraph.json"
         }
       }
     }
