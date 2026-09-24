@@ -1,5 +1,12 @@
 namespace NinetyBackend.Modules.Auth.Models;
 
+public enum OtpPurpose
+{
+    Registration = 0,
+    Login = 1,
+    PasswordReset = 2
+}
+
 public class OtpVerification
 {
     public Guid Id { get; set; }
@@ -7,6 +14,8 @@ public class OtpVerification
     public Guid UserId { get; set; }
 
     public string CodeHash { get; set; } = string.Empty;
+
+    public OtpPurpose Purpose { get; set; } = OtpPurpose.Registration;
 
     public DateTime ExpiresAt { get; set; }
 

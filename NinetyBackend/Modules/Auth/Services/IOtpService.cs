@@ -4,6 +4,6 @@ namespace NinetyBackend.Modules.Auth.Services;
 
 public interface IOtpService
 {
-    Task SendOtpAsync(User user);
-    Task<bool> VerifyOtpAsync(Guid userId, string code);
+    Task SendOtpAsync(User user, OtpPurpose purpose);
+    Task<bool> VerifyOtpAsync(Guid userId, string code, OtpPurpose purpose);
 }

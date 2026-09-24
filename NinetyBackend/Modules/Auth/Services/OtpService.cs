@@ -20,10 +20,13 @@ public class OtpService : IOtpService
         _configuration = configuration;
     }
 
-    public async Task SendOtpAsync(User user)
+    public async Task SendOtpAsync(User user, OtpPurpose purpose)
     {
         var expMinutesStr = _configuration["OTP_EXPIRATION_MINUTES"] ?? _configuration["Otp:ExpirationMinutes"];
         int expMinutes = int.TryParse(expMinutesStr, out var m) ? m : 10;
+
+        // Invalidate any previous active OTPs for this purpose before issuing a new one
+        await _otpRepository.InvalidateActiveOtpsAsync(user.Id, purpose);
 
         var code = RandomNumberGenerator.GetInt32(100000, 999999).ToString();
         var otp = new OtpVerification
@@ -31,6 +34,7 @@ public class OtpService : IOtpService
             Id = Guid.NewGuid(),
             UserId = user.Id,
             CodeHash = SecurityUtils.HashToken(code),
+            Purpose = purpose,
             ExpiresAt = DateTime.UtcNow.AddMinutes(expMinutes),
             Attempts = 0,
             Verified = false,
@@ -41,12 +45,13 @@ public class OtpService : IOtpService
         await _emailService.SendOtpEmailAsync(user.Email, code);
     }
 
-    public async Task<bool> VerifyOtpAsync(Guid userId, string code)
+    public async Task<bool> VerifyOtpAsync(Guid userId, string code, OtpPurpose purpose)
     {
         var maxAttemptsStr = _configuration["OTP_MAX_ATTEMPTS"] ?? _configuration["Otp:MaxAttempts"];
         int maxAttempts = int.TryParse(maxAttemptsStr, out var att) ? att : 5;
 
-        var otp = await _otpRepository.GetLatestByUserIdAsync(userId);
+        // Fetch OTP scoped to the specific purpose — prevents cross-purpose reuse
+        var otp = await _otpRepository.GetLatestByUserIdAndPurposeAsync(userId, purpose);
         if (otp == null || otp.Verified || otp.ExpiresAt < DateTime.UtcNow)
         {
             return false;

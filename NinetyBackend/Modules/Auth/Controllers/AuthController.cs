@@ -2,7 +2,6 @@ using System.Security.Claims;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Google;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using NinetyBackend.Modules.Auth.DTOs;
 using NinetyBackend.Modules.Auth.Services;
@@ -145,14 +144,17 @@ public class AuthController : ControllerBase
         var user = await _oauthService.ProcessGoogleLoginAsync(email, providerKey, firstName, lastName);
         var ip = HttpContext.Connection.RemoteIpAddress?.ToString();
 
-        var authResult = await _authService.VerifyOtpAsync(new VerifyOtpDto { UserId = user.Id }, ip);
-        if (authResult != null && !string.IsNullOrEmpty(authResult.AccessToken))
+        try
         {
+            var authResult = await _authService.CompleteGoogleLoginAsync(user.Id, ip);
             SetTokenCookies(authResult.AccessToken, authResult.RefreshToken);
             return Ok(authResult);
         }
+        catch (UnauthorizedAccessException ex)
+        {
+            return Unauthorized(new { message = ex.Message });
+        }
 
-        return Ok(new { message = "Google account linked successfully.", userId = user.Id, email = user.Email });
     }
 
     [Authorize]

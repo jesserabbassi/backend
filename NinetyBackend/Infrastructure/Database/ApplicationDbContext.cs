@@ -1,5 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 using NinetyBackend.Modules.Auth.Models;
+using NinetyBackend.Modules.Stations.Models;
 
 namespace NinetyBackend.Infrastructure.Database;
 
@@ -17,6 +18,8 @@ public class ApplicationDbContext : DbContext
     public DbSet<RefreshToken> RefreshTokens => Set<RefreshToken>();
     public DbSet<ExternalLogin> ExternalLogins => Set<ExternalLogin>();
     public DbSet<AuditLog> AuditLogs => Set<AuditLog>();
+    public DbSet<GamingStation> GamingStations => Set<GamingStation>();
+    public DbSet<Agent> Agents => Set<Agent>();
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -72,5 +75,23 @@ public class ApplicationDbContext : DbContext
         {
             entity.HasKey(e => e.Id);
         });
+
+        modelBuilder.Entity<GamingStation>(entity =>
+        {
+            entity.HasKey(e => e.Id);
+            entity.HasIndex(e => e.Code).IsUnique();
+            entity.Property(e => e.Code).IsRequired();
+            entity.Property(e => e.Name).IsRequired();
+            entity.Property(e => e.Status).HasConversion<string>();
+        });
+
+        modelBuilder.Entity<Agent>(entity =>
+        {
+            entity.HasKey(e => e.Id);
+            entity.Property(e => e.MachineName).IsRequired();
+            entity.Property(e => e.Version).IsRequired();
+            entity.Property(e => e.Status).HasConversion<string>();
+        });
     }
 }
+

@@ -45,7 +45,7 @@ public class AuthService : IAuthService
         };
 
         await _userRepository.CreateAsync(user);
-        await _otpService.SendOtpAsync(user);
+        await _otpService.SendOtpAsync(user, OtpPurpose.Registration);
 
         return new AuthResponseDto(user.Id, user.Email, RequiresOtp: true);
     }
@@ -63,21 +63,21 @@ public class AuthService : IAuthService
             throw new UnauthorizedAccessException("Account is disabled.");
         }
 
+        // Unverified accounts still require registration OTP first
         if (!user.IsVerified || user.Status == UserStatus.PENDING)
         {
-            await _otpService.SendOtpAsync(user);
+            await _otpService.SendOtpAsync(user, OtpPurpose.Registration);
             return new AuthResponseDto(user.Id, user.Email, RequiresOtp: true);
         }
 
-        user.LastLoginAt = DateTime.UtcNow;
-        await _userRepository.UpdateAsync(user);
-
-        return await GenerateAuthResponseForUserAsync(user, ipAddress);
+        // Every verified login requires a login OTP — tokens are never issued here
+        await _otpService.SendOtpAsync(user, OtpPurpose.Login);
+        return new AuthResponseDto(user.Id, user.Email, RequiresOtp: true);
     }
 
     public async Task<AuthResponseDto?> VerifyOtpAsync(VerifyOtpDto dto, string? ipAddress = null)
     {
-        var verified = await _otpService.VerifyOtpAsync(dto.UserId, dto.Code);
+        var verified = await _otpService.VerifyOtpAsync(dto.UserId, dto.Code, dto.Purpose);
         if (!verified)
         {
             return null;
@@ -89,11 +89,39 @@ public class AuthService : IAuthService
             return null;
         }
 
-        user.IsVerified = true;
-        if (user.Status == UserStatus.PENDING)
+        if (dto.Purpose == OtpPurpose.Registration)
         {
-            user.Status = UserStatus.ACTIVE;
+            // Registration OTP: activate the account
+            user.IsVerified = true;
+            if (user.Status == UserStatus.PENDING)
+            {
+                user.Status = UserStatus.ACTIVE;
+            }
+            user.LastLoginAt = DateTime.UtcNow;
+            await _userRepository.UpdateAsync(user);
         }
+        else if (dto.Purpose == OtpPurpose.Login)
+        {
+            // Login OTP: just record the login timestamp — account already verified
+            user.LastLoginAt = DateTime.UtcNow;
+            await _userRepository.UpdateAsync(user);
+        }
+
+        return await GenerateAuthResponseForUserAsync(user, ipAddress);
+    }
+
+    /// <summary>
+    /// Completes authentication for a Google OAuth user.
+    /// Google has already verified the user's identity, so no OTP is required.
+    /// </summary>
+    public async Task<AuthResponseDto> CompleteGoogleLoginAsync(Guid userId, string? ipAddress = null)
+    {
+        var user = await _userRepository.GetWithRolesAsync(userId);
+        if (user == null || user.Status == UserStatus.BLOCKED || user.Status == UserStatus.SUSPENDED)
+        {
+            throw new UnauthorizedAccessException("Account is disabled or not found.");
+        }
+
         user.LastLoginAt = DateTime.UtcNow;
         await _userRepository.UpdateAsync(user);
 

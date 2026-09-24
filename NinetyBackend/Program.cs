@@ -9,6 +9,8 @@ using NinetyBackend.Infrastructure.Database;
 using NinetyBackend.Infrastructure.Email;
 using NinetyBackend.Modules.Auth.Repositories;
 using NinetyBackend.Modules.Auth.Services;
+using NinetyBackend.Modules.Stations.Repositories;
+using NinetyBackend.Modules.Stations.Services;
 using Swashbuckle.AspNetCore.Swagger;
 using Swashbuckle.AspNetCore.SwaggerUI;
 
@@ -61,6 +63,8 @@ builder.Services.AddScoped<IUserRepository, UserRepository>();
 builder.Services.AddScoped<IOtpRepository, OtpRepository>();
 builder.Services.AddScoped<IRefreshTokenRepository, RefreshTokenRepository>();
 builder.Services.AddScoped<IRoleRepository, RoleRepository>();
+builder.Services.AddScoped<IStationRepository, StationRepository>();
+builder.Services.AddScoped<IAgentRepository, AgentRepository>();
 
 builder.Services.AddScoped<IEmailService, EmailService>();
 builder.Services.AddScoped<IJwtService, JwtService>();
@@ -68,6 +72,8 @@ builder.Services.AddScoped<IOtpService, OtpService>();
 builder.Services.AddScoped<IOAuthService, OAuthService>();
 builder.Services.AddScoped<IAuthorizationService, AuthorizationService>();
 builder.Services.AddScoped<IAuthService, AuthService>();
+builder.Services.AddScoped<IStationService, StationService>();
+builder.Services.AddScoped<IAgentService, AgentService>();
 
 // 6. Configure Authentication (JWT Bearer + Google OAuth)
 var rawSecretKey = builder.Configuration["JWT_SECRET_KEY"] ?? builder.Configuration["Jwt:SecretKey"];

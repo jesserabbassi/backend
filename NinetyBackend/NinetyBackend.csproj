@@ -27,6 +27,8 @@
 
   <ItemGroup>
     <Folder Include="Controllers\" />
+    <Folder Include="Modules\Stations\Repositories\" />
+    <Folder Include="Modules\Stations\Services\" />
     <Folder Include="Services\Security\" />
     <Folder Include="test\" />
   </ItemGroup>
