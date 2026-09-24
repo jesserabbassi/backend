@@ -1,5 +1,20 @@
 .vs
 *.cache
+## .NET / Visual Studio
+bin/
+obj/
+*.user
+*.userosscache
+*.sln.docstates
+.vs/
+.vscode/
+*.cache
+
+## Environment & Secrets
+.env
+.env.*
+!.env.example
+
 NinetyBackend/obj/Debug/net9.0/NinetyBackend.sourcelink.json
 NinetyBackend/obj/Debug/net9.0/NinetyBackend.MvcApplicationPartsAssemblyInfo.cs
 NinetyBackend/obj/Debug/net9.0/NinetyBackend.csproj.FileListAbsolute.txt
