@@ -1,6 +1,7 @@
 using Microsoft.EntityFrameworkCore;
 using NinetyBackend.Modules.Auth.Models;
 using NinetyBackend.Modules.MonitoringAlerts.Models;
+using NinetyBackend.Modules.RemoteControl.Models;
 using NinetyBackend.Modules.Stations.Models;
 
 namespace NinetyBackend.Infrastructure.Database;
@@ -23,6 +24,7 @@ public class ApplicationDbContext : DbContext
     public DbSet<Agent> Agents => Set<Agent>();
     public DbSet<Telemetry> Telemetries => Set<Telemetry>();
     public DbSet<Alert> Alerts => Set<Alert>();
+    public DbSet<RemoteCommand> RemoteCommands => Set<RemoteCommand>();
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -111,6 +113,15 @@ public class ApplicationDbContext : DbContext
             entity.Property(e => e.Message).IsRequired();
             entity.Property(e => e.Type).HasConversion<string>();
             entity.Property(e => e.Severity).HasConversion<string>();
+        });
+
+        modelBuilder.Entity<RemoteCommand>(entity =>
+        {
+            entity.HasKey(e => e.Id);
+            entity.HasIndex(e => e.StationId);
+            entity.Property(e => e.Type).HasConversion<string>();
+            entity.Property(e => e.Status).HasConversion<string>();
+            entity.Property(e => e.PayloadJson).HasColumnType("text");
         });
     }
 }
