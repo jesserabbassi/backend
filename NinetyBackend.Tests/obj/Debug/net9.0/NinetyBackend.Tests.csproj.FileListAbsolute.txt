@@ -154,3 +154,5 @@ C:\Users\USER\Documents\CSTAM\future-owners\backend\NinetyBackend\NinetyBackend.
 C:\Users\USER\Documents\CSTAM\future-owners\backend\NinetyBackend\NinetyBackend.Tests\obj\Debug\net9.0\NinetyBackend.Tests.pdb
 C:\Users\USER\Documents\CSTAM\future-owners\backend\NinetyBackend\NinetyBackend.Tests\obj\Debug\net9.0\NinetyBackend.Tests.genruntimeconfig.cache
 C:\Users\USER\Documents\CSTAM\future-owners\backend\NinetyBackend\NinetyBackend.Tests\obj\Debug\net9.0\ref\NinetyBackend.Tests.dll
+C:\Users\USER\Documents\CSTAM\future-owners\backend\NinetyBackend\NinetyBackend.Tests\bin\Debug\net9.0\HealthChecks.UI.Client.dll
+C:\Users\USER\Documents\CSTAM\future-owners\backend\NinetyBackend\NinetyBackend.Tests\bin\Debug\net9.0\HealthChecks.UI.Core.dll

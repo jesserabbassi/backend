@@ -1,9 +1,11 @@
 {
   "version": 2,
-  "dgSpecHash": "EiDdZgylciI=",
+  "dgSpecHash": "2Kk89V4c44I=",
   "success": true,
   "projectFilePath": "C:\\Users\\USER\\Documents\\CSTAM\\future-owners\\backend\\NinetyBackend\\NinetyBackend.Tests\\NinetyBackend.Tests.csproj",
   "expectedPackageFiles": [
+    "C:\\Users\\USER\\.nuget\\packages\\aspnetcore.healthchecks.ui.client\\9.0.0\\aspnetcore.healthchecks.ui.client.9.0.0.nupkg.sha512",
+    "C:\\Users\\USER\\.nuget\\packages\\aspnetcore.healthchecks.ui.core\\9.0.0\\aspnetcore.healthchecks.ui.core.9.0.0.nupkg.sha512",
     "C:\\Users\\USER\\.nuget\\packages\\bcrypt.net-next\\4.0.3\\bcrypt.net-next.4.0.3.nupkg.sha512",
     "C:\\Users\\USER\\.nuget\\packages\\bouncycastle.cryptography\\2.7.0\\bouncycastle.cryptography.2.7.0.nupkg.sha512",
     "C:\\Users\\USER\\.nuget\\packages\\castle.core\\5.1.1\\castle.core.5.1.1.nupkg.sha512",
@@ -29,6 +31,10 @@
     "C:\\Users\\USER\\.nuget\\packages\\microsoft.extensions.dependencyinjection.abstractions\\10.0.12\\microsoft.extensions.dependencyinjection.abstractions.10.0.12.nupkg.sha512",
     "C:\\Users\\USER\\.nuget\\packages\\microsoft.extensions.diagnostics\\10.0.12\\microsoft.extensions.diagnostics.10.0.12.nupkg.sha512",
     "C:\\Users\\USER\\.nuget\\packages\\microsoft.extensions.diagnostics.abstractions\\10.0.12\\microsoft.extensions.diagnostics.abstractions.10.0.12.nupkg.sha512",
+    "C:\\Users\\USER\\.nuget\\packages\\microsoft.extensions.diagnostics.healthchecks\\8.0.11\\microsoft.extensions.diagnostics.healthchecks.8.0.11.nupkg.sha512",
+    "C:\\Users\\USER\\.nuget\\packages\\microsoft.extensions.diagnostics.healthchecks.abstractions\\8.0.11\\microsoft.extensions.diagnostics.healthchecks.abstractions.8.0.11.nupkg.sha512",
+    "C:\\Users\\USER\\.nuget\\packages\\microsoft.extensions.fileproviders.abstractions\\8.0.0\\microsoft.extensions.fileproviders.abstractions.8.0.0.nupkg.sha512",
+    "C:\\Users\\USER\\.nuget\\packages\\microsoft.extensions.hosting.abstractions\\8.0.1\\microsoft.extensions.hosting.abstractions.8.0.1.nupkg.sha512",
     "C:\\Users\\USER\\.nuget\\packages\\microsoft.extensions.identity.core\\10.0.12\\microsoft.extensions.identity.core.10.0.12.nupkg.sha512",
     "C:\\Users\\USER\\.nuget\\packages\\microsoft.extensions.logging\\10.0.12\\microsoft.extensions.logging.10.0.12.nupkg.sha512",
     "C:\\Users\\USER\\.nuget\\packages\\microsoft.extensions.logging.abstractions\\10.0.12\\microsoft.extensions.logging.abstractions.10.0.12.nupkg.sha512",

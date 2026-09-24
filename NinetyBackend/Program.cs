@@ -1,12 +1,14 @@
 using System.Text;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
-using Microsoft.AspNetCore.Identity;
+using HealthChecks.UI.Client;
+using Microsoft.AspNetCore.Diagnostics.HealthChecks;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using NinetyBackend.Infrastructure.Authentication;
 using NinetyBackend.Infrastructure.Configuration;
 using NinetyBackend.Infrastructure.Database;
 using NinetyBackend.Infrastructure.Email;
+using NinetyBackend.Infrastructure.SignalR;
 using NinetyBackend.Modules.Auth.Repositories;
 using NinetyBackend.Modules.Auth.Services;
 using NinetyBackend.Modules.Stations.Repositories;
@@ -18,6 +20,7 @@ using Swashbuckle.AspNetCore.SwaggerUI;
 var envData = DotEnv.Load(".env");
 
 var builder = WebApplication.CreateBuilder(args);
+
 
 // 2. Load .env data and expand %VAR% / ${VAR} placeholders from appsettings.json
 builder.Configuration.AddInMemoryCollection(envData);
@@ -126,14 +129,28 @@ builder.Services.AddAuthentication(options =>
     googleOptions.ClientSecret = string.IsNullOrEmpty(clientSecret) || clientSecret.StartsWith('%') ? "dummy-google-client-secret" : clientSecret;
 });
 
-// 7. Add Controllers & OpenAPI
+// 7. Add Controllers & Swagger & SignalR
 builder.Services.AddControllers();
+builder.Services.AddSignalR();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
+builder.Services.AddHealthChecks();
+
+// Avant Build()
+builder.Services.AddSwaggerGen(options =>
+{
+    options.DocumentFilter<HealthCheckDocumentFilter>();
+});
+
 var app = builder.Build();
 
-// 8. Pipeline Configuration
+// 8. Health Endpoint
+app.MapHealthChecks("/health", new HealthCheckOptions
+{
+    ResponseWriter = UIResponseWriter.WriteHealthCheckUIResponse
+});
+// 9. Pipeline Configuration
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
@@ -146,5 +163,6 @@ app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllers();
+app.MapHub<StationHub>("/hubs/stations");
 
 app.Run();

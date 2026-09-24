@@ -6,6 +6,7 @@ obj/
 *.sln.docstates
 .vs/
 .vscode/
+*.cache
 
 ## Environment & Secrets
 .env
