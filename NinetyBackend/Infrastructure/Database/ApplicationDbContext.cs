@@ -1,6 +1,7 @@
 using Microsoft.EntityFrameworkCore;
 using NinetyBackend.Modules.Auth.Models;
 using NinetyBackend.Modules.Customers.Models;
+using NinetyBackend.Modules.Games.Models;
 using NinetyBackend.Modules.MonitoringAlerts.Models;
 using NinetyBackend.Modules.RemoteControl.Models;
 using NinetyBackend.Modules.Stations.Models;
@@ -22,6 +23,7 @@ public class ApplicationDbContext : DbContext
     public DbSet<ExternalLogin> ExternalLogins => Set<ExternalLogin>();
     public DbSet<AuditLog> AuditLogs => Set<AuditLog>();
     public DbSet<Customer> Customers => Set<Customer>();
+    public DbSet<Game> Games => Set<Game>();
     public DbSet<GamingStation> GamingStations => Set<GamingStation>();
     public DbSet<Agent> Agents => Set<Agent>();
     public DbSet<Telemetry> Telemetries => Set<Telemetry>();
@@ -91,6 +93,16 @@ public class ApplicationDbContext : DbContext
             entity.Property(e => e.LastName).IsRequired();
             entity.Property(e => e.Phone).IsRequired();
             entity.Property(e => e.Email).IsRequired();
+            entity.Property(e => e.Status).HasConversion<string>();
+        });
+
+        modelBuilder.Entity<Game>(entity =>
+        {
+            entity.HasKey(e => e.Id);
+            entity.Property(e => e.Name).IsRequired();
+            entity.Property(e => e.Publisher).IsRequired();
+            entity.Property(e => e.Version).IsRequired();
+            entity.Property(e => e.Description).IsRequired();
             entity.Property(e => e.Status).HasConversion<string>();
         });
 
