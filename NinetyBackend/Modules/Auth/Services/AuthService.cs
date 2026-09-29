@@ -2,6 +2,7 @@ using NinetyBackend.Infrastructure.Security;
 using NinetyBackend.Modules.Auth.DTOs;
 using NinetyBackend.Modules.Auth.Models;
 using NinetyBackend.Modules.Auth.Repositories;
+using NinetyBackend.Modules.Auth.Authorization;
 
 namespace NinetyBackend.Modules.Auth.Services;
 
@@ -11,17 +12,20 @@ public class AuthService : IAuthService
     private readonly IOtpService _otpService;
     private readonly IJwtService _jwtService;
     private readonly IRefreshTokenRepository _refreshTokenRepository;
+    private readonly IRoleRepository? _roleRepository;
 
     public AuthService(
         IUserRepository userRepository,
         IOtpService otpService,
         IJwtService jwtService,
-        IRefreshTokenRepository refreshTokenRepository)
+        IRefreshTokenRepository refreshTokenRepository,
+        IRoleRepository? roleRepository = null)
     {
         _userRepository = userRepository;
         _otpService = otpService;
         _jwtService = jwtService;
         _refreshTokenRepository = refreshTokenRepository;
+        _roleRepository = roleRepository;
     }
 
     public async Task<AuthResponseDto> RegisterAsync(RegisterDto dto)
@@ -43,6 +47,13 @@ public class AuthService : IAuthService
             Status = UserStatus.PENDING,
             CreatedAt = DateTime.UtcNow
         };
+
+        if (_roleRepository != null)
+        {
+            var defaultRole = await _roleRepository.GetDefaultRoleAsync()
+                ?? throw new InvalidOperationException("Default Customer role is not configured.");
+            user.Roles.Add(defaultRole);
+        }
 
         await _userRepository.CreateAsync(user);
         await _otpService.SendOtpAsync(user, OtpPurpose.Registration);

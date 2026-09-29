@@ -5,5 +5,6 @@ namespace NinetyBackend.Modules.Auth.Services;
 public interface IJwtService
 {
     string GenerateAccessToken(User user);
+    string GenerateAgentAccessToken(Guid agentId);
     string GenerateRefreshToken();
 }

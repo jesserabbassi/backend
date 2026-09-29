@@ -1,6 +1,7 @@
 using Microsoft.EntityFrameworkCore;
 using NinetyBackend.Infrastructure.Database;
 using NinetyBackend.Modules.Auth.Models;
+using NinetyBackend.Modules.Auth.Authorization;
 
 namespace NinetyBackend.Modules.Auth.Repositories;
 
@@ -24,4 +25,6 @@ public class RoleRepository : IRoleRepository
     {
         return _db.Roles.ToListAsync();
     }
+
+    public Task<Role?> GetDefaultRoleAsync() => GetByNameAsync(RbacDefinitions.CustomerRole);
 }

@@ -6,4 +6,6 @@ public interface IRoleRepository
 {
     Task<Role?> GetByNameAsync(string name);
     Task<List<Role>> GetAllAsync();
+
+    Task<Role?> GetDefaultRoleAsync();
 }

@@ -2,6 +2,7 @@ using Microsoft.EntityFrameworkCore;
 using NinetyBackend.Modules.Auth.Models;
 using NinetyBackend.Modules.MonitoringAlerts.Models;
 using NinetyBackend.Modules.Stations.Models;
+using NinetyBackend.Modules.Wallets.Models;
 
 namespace NinetyBackend.Infrastructure.Database;
 
@@ -23,6 +24,8 @@ public class ApplicationDbContext : DbContext
     public DbSet<Agent> Agents => Set<Agent>();
     public DbSet<Telemetry> Telemetries => Set<Telemetry>();
     public DbSet<Alert> Alerts => Set<Alert>();
+    public DbSet<Wallet> Wallets => Set<Wallet>();
+    public DbSet<WalletTransaction> WalletTransactions => Set<WalletTransaction>();
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -111,6 +114,27 @@ public class ApplicationDbContext : DbContext
             entity.Property(e => e.Message).IsRequired();
             entity.Property(e => e.Type).HasConversion<string>();
             entity.Property(e => e.Severity).HasConversion<string>();
+        });
+
+        modelBuilder.Entity<Wallet>(entity =>
+        {
+            entity.HasKey(e => e.Id);
+            entity.HasIndex(e => e.CustomerId).IsUnique();
+            entity.Property(e => e.Balance).HasPrecision(18, 2);
+            entity.Property(e => e.Currency).HasMaxLength(3).IsRequired();
+            entity.Property(e => e.Version).IsConcurrencyToken();
+            entity.HasOne(e => e.Customer).WithMany().HasForeignKey(e => e.CustomerId).OnDelete(DeleteBehavior.Cascade);
+        });
+
+        modelBuilder.Entity<WalletTransaction>(entity =>
+        {
+            entity.HasKey(e => e.Id);
+            entity.HasIndex(e => new { e.WalletId, e.IdempotencyKey }).IsUnique().HasFilter("\"IdempotencyKey\" IS NOT NULL");
+            entity.Property(e => e.Amount).HasPrecision(18, 2);
+            entity.Property(e => e.PreviousBalance).HasPrecision(18, 2);
+            entity.Property(e => e.NewBalance).HasPrecision(18, 2);
+            entity.Property(e => e.Type).HasConversion<string>();
+            entity.HasOne(e => e.Wallet).WithMany(w => w.Transactions).HasForeignKey(e => e.WalletId).OnDelete(DeleteBehavior.Restrict);
         });
     }
 }

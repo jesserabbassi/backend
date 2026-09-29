@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using NinetyBackend.Modules.Stations.DTOs;
 using NinetyBackend.Modules.Stations.Services;
@@ -5,6 +6,7 @@ using NinetyBackend.Modules.Stations.Services;
 namespace NinetyBackend.Modules.Stations.Controllers;
 
 [ApiController]
+[Authorize(Roles = "Admin,Supervisor")]
 [Route("api/[controller]")]
 public class StationController : ControllerBase
 {

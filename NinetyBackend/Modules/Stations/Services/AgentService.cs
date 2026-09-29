@@ -83,7 +83,21 @@ public class AgentService : IAgentService
         return MapToResponseDto(agent);
     }
 
-    public async Task<bool> DisconnectAsync(Guid id)
+    public async Task<AgentResponseDto?> GetByIdAsync(Guid id, CancellationToken ct = default)
+    {
+        var agent = await _agentRepository.GetByIdAsync(id);
+        return agent is null ? null : MapToResponseDto(agent);
+    }
+
+    public async Task<AgentResponseDto?> ConnectAsync(Guid agentId, Guid stationId, CancellationToken ct = default)
+    {
+        var agent = await _agentRepository.GetByIdAsync(agentId);
+        return agent is null || agent.StationId != stationId
+            ? null
+            : await HeartbeatAsync(agentId);
+    }
+
+    public async Task<bool> DisconnectAsync(Guid id, CancellationToken ct = default)
     {
         var agent = await _agentRepository.GetByIdAsync(id);
         if (agent == null) return false;

@@ -89,6 +89,7 @@ public static class DotEnv
     {
         switch (key.ToUpperInvariant())
         {
+            case "NINETY_DATABASE_CONNECTION_STRING":
             case "SUPABASE_CONNECTION_STRING":
                 SetAlias("ConnectionStrings:DefaultConnection", value, result);
                 SetAlias("ConnectionStrings:Supabase", value, result);
@@ -108,9 +109,11 @@ public static class DotEnv
             case "JWT_REFRESH_TOKEN_DAYS":
                 SetAlias("Jwt:RefreshTokenDays", value, result);
                 break;
+            case "NINETY_GOOGLE_CLIENT_ID":
             case "GOOGLE_CLIENT_ID":
                 SetAlias("Authentication:Google:ClientId", value, result);
                 break;
+            case "NINETY_GOOGLE_CLIENT_SECRET":
             case "GOOGLE_CLIENT_SECRET":
                 SetAlias("Authentication:Google:ClientSecret", value, result);
                 break;

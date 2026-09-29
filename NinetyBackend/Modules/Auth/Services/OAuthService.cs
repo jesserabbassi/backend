@@ -1,15 +1,18 @@
 using NinetyBackend.Modules.Auth.Models;
 using NinetyBackend.Modules.Auth.Repositories;
+using NinetyBackend.Modules.Auth.Authorization;
 
 namespace NinetyBackend.Modules.Auth.Services;
 
 public class OAuthService : IOAuthService
 {
     private readonly IUserRepository _userRepository;
+    private readonly IRoleRepository _roleRepository;
 
-    public OAuthService(IUserRepository userRepository)
+    public OAuthService(IUserRepository userRepository, IRoleRepository roleRepository)
     {
         _userRepository = userRepository;
+        _roleRepository = roleRepository;
     }
 
     public async Task<User> ProcessGoogleLoginAsync(string email, string providerKey, string? firstName, string? lastName)
@@ -56,6 +59,10 @@ public class OAuthService : IOAuthService
                 }
             }
         };
+
+        var defaultRole = await _roleRepository.GetDefaultRoleAsync()
+            ?? throw new InvalidOperationException("Default Customer role is not configured.");
+        newUser.Roles.Add(defaultRole);
 
         await _userRepository.CreateAsync(newUser);
         return newUser;

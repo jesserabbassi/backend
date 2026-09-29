@@ -11,10 +11,13 @@ using NinetyBackend.Infrastructure.Email;
 using NinetyBackend.Infrastructure.SignalR;
 using NinetyBackend.Modules.Auth.Repositories;
 using NinetyBackend.Modules.Auth.Services;
+using NinetyBackend.Modules.Auth.Authorization;
 using NinetyBackend.Modules.MonitoringAlerts.Repositories;
 using NinetyBackend.Modules.MonitoringAlerts.Services;
 using NinetyBackend.Modules.Stations.Repositories;
 using NinetyBackend.Modules.Stations.Services;
+using NinetyBackend.Modules.Wallets.Repositories;
+using NinetyBackend.Modules.Wallets.Services;
 using Swashbuckle.AspNetCore.Swagger;
 using Swashbuckle.AspNetCore.SwaggerUI;
 
@@ -32,8 +35,8 @@ var expandedPlaceholders = DotEnv.ExpandPlaceholders(builder.Configuration, envD
 builder.Configuration.AddInMemoryCollection(expandedPlaceholders);
 
 // 3. Database Context Configuration (Supabase PostgreSQL via Npgsql)
-var connectionString =
-    builder.Configuration.GetConnectionString("DefaultConnection");
+var connectionString = builder.Configuration.GetConnectionString("DefaultConnection")
+    ?? builder.Configuration["NINETY_DATABASE_CONNECTION_STRING"];
 
 Console.WriteLine(
     $"Connection string configured: {!string.IsNullOrWhiteSpace(connectionString)}"
@@ -72,6 +75,7 @@ builder.Services.AddScoped<IStationRepository, StationRepository>();
 builder.Services.AddScoped<IAgentRepository, AgentRepository>();
 builder.Services.AddScoped<ITelemetryRepository, TelemetryRepository>();
 builder.Services.AddScoped<IAlertRepository, AlertRepository>();
+builder.Services.AddScoped<IWalletRepository, WalletRepository>();
 
 builder.Services.AddScoped<IEmailService, EmailService>();
 builder.Services.AddScoped<IJwtService, JwtService>();
@@ -83,6 +87,10 @@ builder.Services.AddScoped<IStationService, StationService>();
 builder.Services.AddScoped<IAgentService, AgentService>();
 builder.Services.AddScoped<IMonitoringService, MonitoringService>();
 builder.Services.AddScoped<IAlertService, AlertService>();
+builder.Services.AddScoped<IWalletService, WalletService>();
+builder.Services.AddScoped<ITransactionService, TransactionService>();
+builder.Services.AddScoped<IPaymentService, PaymentService>();
+builder.Services.AddSingleton<IAgentConnectionManager, AgentConnectionManager>();
 
 // 6. Configure Authentication (JWT Bearer + Google OAuth)
 var rawSecretKey = builder.Configuration["JWT_SECRET_KEY"] ?? builder.Configuration["Jwt:SecretKey"];
@@ -128,11 +136,20 @@ builder.Services.AddAuthentication(options =>
 })
 .AddGoogle(googleOptions =>
 {
-    var clientId = builder.Configuration["GOOGLE_CLIENT_ID"] ?? builder.Configuration["Authentication:Google:ClientId"];
+    var clientId = builder.Configuration["NINETY_GOOGLE_CLIENT_ID"] ?? builder.Configuration["GOOGLE_CLIENT_ID"] ?? builder.Configuration["Authentication:Google:ClientId"];
     googleOptions.ClientId = string.IsNullOrEmpty(clientId) || clientId.StartsWith('%') ? "dummy-google-client-id" : clientId;
 
-    var clientSecret = builder.Configuration["GOOGLE_CLIENT_SECRET"] ?? builder.Configuration["Authentication:Google:ClientSecret"];
+    var clientSecret = builder.Configuration["NINETY_GOOGLE_CLIENT_SECRET"] ?? builder.Configuration["GOOGLE_CLIENT_SECRET"] ?? builder.Configuration["Authentication:Google:ClientSecret"];
     googleOptions.ClientSecret = string.IsNullOrEmpty(clientSecret) || clientSecret.StartsWith('%') ? "dummy-google-client-secret" : clientSecret;
+});
+
+builder.Services.AddAuthorization(options =>
+{
+    foreach (var permission in RbacDefinitions.Permissions)
+    {
+        options.AddPolicy(permission, policy =>
+            policy.RequireAuthenticatedUser().RequireClaim("permission", permission));
+    }
 });
 
 // 7. Add Controllers & Swagger & SignalR
@@ -150,6 +167,11 @@ builder.Services.AddSwaggerGen(options =>
 });
 
 var app = builder.Build();
+
+using (var scope = app.Services.CreateScope())
+{
+    await RbacSeeder.SeedAsync(scope.ServiceProvider.GetRequiredService<ApplicationDbContext>());
+}
 
 // 8. Health Endpoint
 app.MapHealthChecks("/health", new HealthCheckOptions
@@ -170,5 +192,6 @@ app.UseAuthorization();
 
 app.MapControllers();
 app.MapHub<StationHub>("/hubs/stations");
+app.MapHub<AgentHub>("/hubs/agents");
 
 app.Run();

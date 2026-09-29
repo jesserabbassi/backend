@@ -7,6 +7,12 @@ obj/
 .vs/
 .vscode/
 *.cache
+TestResults/
+artifacts/
+*.nupkg
+.cache
+
+graphify-out/
 
 ## Environment & Secrets
 .env

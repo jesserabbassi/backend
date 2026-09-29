@@ -41,6 +41,19 @@ public class JwtService : IJwtService
             }
         }
 
+        return GenerateToken(claims);
+    }
+
+    public string GenerateAgentAccessToken(Guid agentId)
+    {
+        if (agentId == Guid.Empty)
+            throw new ArgumentException("Agent id is required.", nameof(agentId));
+
+        return GenerateToken([new Claim("agent_id", agentId.ToString())]);
+    }
+
+    private string GenerateToken(IEnumerable<Claim> claims)
+    {
         var secret = string.IsNullOrEmpty(_options.SecretKey)
             ? "SuperSecretDefaultKeyMustBeAtLeast32BytesLongForSecurity!"
             : _options.SecretKey;
