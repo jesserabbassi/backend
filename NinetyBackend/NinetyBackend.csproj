@@ -7,6 +7,21 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="Controllers\**" />
+    <Compile Remove="Services\**" />
+    <Compile Remove="test\**" />
+    <Content Remove="Controllers\**" />
+    <Content Remove="Services\**" />
+    <Content Remove="test\**" />
+    <EmbeddedResource Remove="Controllers\**" />
+    <EmbeddedResource Remove="Services\**" />
+    <EmbeddedResource Remove="test\**" />
+    <None Remove="Controllers\**" />
+    <None Remove="Services\**" />
+    <None Remove="test\**" />
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="AspNetCore.HealthChecks.UI.Client" Version="9.0.0" />
     <PackageReference Include="BCrypt.Net-Next" Version="4.0.3" />
     <PackageReference Include="MailKit" Version="4.18.0" />
@@ -28,11 +43,8 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Controllers\" />
     <Folder Include="Modules\Stations\Repositories\" />
     <Folder Include="Modules\Stations\Services\" />
-    <Folder Include="Services\Security\" />
-    <Folder Include="test\" />
   </ItemGroup>
 
 </Project>

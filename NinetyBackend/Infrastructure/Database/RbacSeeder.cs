@@ -37,6 +37,19 @@ public static class RbacSeeder
                 .ToList();
         }
 
+        // Backfill users created before RBAC existed. Keep this idempotent.
+        var customerRole = roles.First(r =>
+            r.Name.Equals(RbacDefinitions.CustomerRole, StringComparison.OrdinalIgnoreCase));
+        var rolelessUsers = await db.Users
+            .Include(u => u.Roles)
+            .Where(u => !u.Roles.Any())
+            .ToListAsync();
+
+        foreach (var user in rolelessUsers)
+        {
+            user.Roles.Add(customerRole);
+        }
+
         await db.SaveChangesAsync();
     }
 }
