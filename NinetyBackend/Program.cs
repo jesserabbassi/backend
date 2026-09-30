@@ -17,6 +17,8 @@ using NinetyBackend.Modules.MonitoringAlerts.Repositories;
 using NinetyBackend.Modules.MonitoringAlerts.Services;
 using NinetyBackend.Modules.RemoteControl.Repositories;
 using NinetyBackend.Modules.RemoteControl.Services;
+using NinetyBackend.Modules.Reservations.Repositories;
+using NinetyBackend.Modules.Reservations.Services;
 using NinetyBackend.Modules.Stations.Repositories;
 using NinetyBackend.Modules.Stations.Services;
 using Swashbuckle.AspNetCore.Swagger;
@@ -74,6 +76,7 @@ builder.Services.AddScoped<IRoleRepository, RoleRepository>();
 builder.Services.AddScoped<ICustomerRepository, CustomerRepository>();
 builder.Services.AddScoped<IGameRepository, GameRepository>();
 builder.Services.AddScoped<IStationRepository, StationRepository>();
+builder.Services.AddScoped<IReservationRepository, ReservationRepository>();
 builder.Services.AddScoped<IAgentRepository, AgentRepository>();
 builder.Services.AddScoped<ITelemetryRepository, TelemetryRepository>();
 builder.Services.AddScoped<IAlertRepository, AlertRepository>();
@@ -93,6 +96,8 @@ builder.Services.AddScoped<IAgentService, AgentService>();
 builder.Services.AddScoped<IMonitoringService, MonitoringService>();
 builder.Services.AddScoped<IAlertService, AlertService>();
 builder.Services.AddScoped<IRemoteControlService, RemoteControlService>();
+builder.Services.AddScoped<IAvailabilityService, AvailabilityService>();
+builder.Services.AddScoped<IReservationService, ReservationService>();
 
 // 6. Configure Authentication (JWT Bearer + Google OAuth)
 var rawSecretKey = builder.Configuration["JWT_SECRET_KEY"] ?? builder.Configuration["Jwt:SecretKey"];

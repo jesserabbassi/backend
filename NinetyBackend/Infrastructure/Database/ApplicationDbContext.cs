@@ -4,6 +4,7 @@ using NinetyBackend.Modules.Customers.Models;
 using NinetyBackend.Modules.Games.Models;
 using NinetyBackend.Modules.MonitoringAlerts.Models;
 using NinetyBackend.Modules.RemoteControl.Models;
+using NinetyBackend.Modules.Reservations.Models;
 using NinetyBackend.Modules.Stations.Models;
 
 namespace NinetyBackend.Infrastructure.Database;
@@ -29,6 +30,7 @@ public class ApplicationDbContext : DbContext
     public DbSet<Telemetry> Telemetries => Set<Telemetry>();
     public DbSet<Alert> Alerts => Set<Alert>();
     public DbSet<RemoteCommand> RemoteCommands => Set<RemoteCommand>();
+    public DbSet<Reservation> Reservations => Set<Reservation>();
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -110,6 +112,7 @@ public class ApplicationDbContext : DbContext
         {
             entity.HasKey(e => e.Id);
             entity.HasIndex(e => e.Code).IsUnique();
+            entity.HasIndex(e => e.BranchId);
             entity.Property(e => e.Code).IsRequired();
             entity.Property(e => e.Name).IsRequired();
             entity.Property(e => e.Status).HasConversion<string>();
@@ -147,6 +150,14 @@ public class ApplicationDbContext : DbContext
             entity.Property(e => e.Type).HasConversion<string>();
             entity.Property(e => e.Status).HasConversion<string>();
             entity.Property(e => e.PayloadJson).HasColumnType("text");
+        });
+
+        modelBuilder.Entity<Reservation>(entity =>
+        {
+            entity.HasKey(e => e.Id);
+            entity.HasIndex(e => new { e.BranchId, e.StationId, e.StartTime, e.EndTime });
+            entity.HasIndex(e => new { e.CustomerId, e.StartTime });
+            entity.Property(e => e.Status).HasConversion<string>();
         });
     }
 }
