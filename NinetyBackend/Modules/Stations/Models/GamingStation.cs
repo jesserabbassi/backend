@@ -3,6 +3,7 @@ namespace NinetyBackend.Modules.Stations.Models;
 public class GamingStation
 {
     public Guid Id { get; set; }
+    public Guid? BranchId { get; set; }
     public string Code { get; set; } = null!;
     public string Name { get; set; } = null!;
     public StationStatus Status { get; set; } = StationStatus.Offline;

@@ -1,6 +1,10 @@
 using Microsoft.EntityFrameworkCore;
 using NinetyBackend.Modules.Auth.Models;
+using NinetyBackend.Modules.Customers.Models;
+using NinetyBackend.Modules.Games.Models;
 using NinetyBackend.Modules.MonitoringAlerts.Models;
+using NinetyBackend.Modules.RemoteControl.Models;
+using NinetyBackend.Modules.Reservations.Models;
 using NinetyBackend.Modules.Stations.Models;
 using NinetyBackend.Modules.Wallets.Models;
 
@@ -20,12 +24,16 @@ public class ApplicationDbContext : DbContext
     public DbSet<RefreshToken> RefreshTokens => Set<RefreshToken>();
     public DbSet<ExternalLogin> ExternalLogins => Set<ExternalLogin>();
     public DbSet<AuditLog> AuditLogs => Set<AuditLog>();
+    public DbSet<Customer> Customers => Set<Customer>();
+    public DbSet<Game> Games => Set<Game>();
     public DbSet<GamingStation> GamingStations => Set<GamingStation>();
     public DbSet<Agent> Agents => Set<Agent>();
     public DbSet<Telemetry> Telemetries => Set<Telemetry>();
     public DbSet<Alert> Alerts => Set<Alert>();
     public DbSet<Wallet> Wallets => Set<Wallet>();
     public DbSet<WalletTransaction> WalletTransactions => Set<WalletTransaction>();
+    public DbSet<RemoteCommand> RemoteCommands => Set<RemoteCommand>();
+    public DbSet<Reservation> Reservations => Set<Reservation>();
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -82,10 +90,32 @@ public class ApplicationDbContext : DbContext
             entity.HasKey(e => e.Id);
         });
 
+        modelBuilder.Entity<Customer>(entity =>
+        {
+            entity.HasKey(e => e.Id);
+            entity.HasIndex(e => e.Email);
+            entity.Property(e => e.FirstName).IsRequired();
+            entity.Property(e => e.LastName).IsRequired();
+            entity.Property(e => e.Phone).IsRequired();
+            entity.Property(e => e.Email).IsRequired();
+            entity.Property(e => e.Status).HasConversion<string>();
+        });
+
+        modelBuilder.Entity<Game>(entity =>
+        {
+            entity.HasKey(e => e.Id);
+            entity.Property(e => e.Name).IsRequired();
+            entity.Property(e => e.Publisher).IsRequired();
+            entity.Property(e => e.Version).IsRequired();
+            entity.Property(e => e.Description).IsRequired();
+            entity.Property(e => e.Status).HasConversion<string>();
+        });
+
         modelBuilder.Entity<GamingStation>(entity =>
         {
             entity.HasKey(e => e.Id);
             entity.HasIndex(e => e.Code).IsUnique();
+            entity.HasIndex(e => e.BranchId);
             entity.Property(e => e.Code).IsRequired();
             entity.Property(e => e.Name).IsRequired();
             entity.Property(e => e.Status).HasConversion<string>();
@@ -135,6 +165,23 @@ public class ApplicationDbContext : DbContext
             entity.Property(e => e.NewBalance).HasPrecision(18, 2);
             entity.Property(e => e.Type).HasConversion<string>();
             entity.HasOne(e => e.Wallet).WithMany(w => w.Transactions).HasForeignKey(e => e.WalletId).OnDelete(DeleteBehavior.Restrict);
+        });
+
+        modelBuilder.Entity<RemoteCommand>(entity =>
+        {
+            entity.HasKey(e => e.Id);
+            entity.HasIndex(e => e.StationId);
+            entity.Property(e => e.Type).HasConversion<string>();
+            entity.Property(e => e.Status).HasConversion<string>();
+            entity.Property(e => e.PayloadJson).HasColumnType("text");
+        });
+
+        modelBuilder.Entity<Reservation>(entity =>
+        {
+            entity.HasKey(e => e.Id);
+            entity.HasIndex(e => new { e.BranchId, e.StationId, e.StartTime, e.EndTime });
+            entity.HasIndex(e => new { e.CustomerId, e.StartTime });
+            entity.Property(e => e.Status).HasConversion<string>();
         });
     }
 }

@@ -36,6 +36,7 @@ public class StationService : IStationService
         var station = new GamingStation
         {
             Id = Guid.NewGuid(),
+            BranchId = dto.BranchId,
             Code = dto.Code.Trim(),
             Name = dto.Name.Trim(),
             Status = StationStatus.Offline,
@@ -81,6 +82,7 @@ public class StationService : IStationService
     {
         return new StationResponseDto(
             station.Id,
+            station.BranchId,
             station.Code,
             station.Name,
             station.Status.ToString(),

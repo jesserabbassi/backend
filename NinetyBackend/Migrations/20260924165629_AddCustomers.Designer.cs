@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using NinetyBackend.Infrastructure.Database;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
@@ -11,9 +12,11 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace NinetyBackend.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260924165629_AddCustomers")]
+    partial class AddCustomers
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -271,37 +274,6 @@ namespace NinetyBackend.Migrations
                     b.ToTable("Customers");
                 });
 
-            modelBuilder.Entity("NinetyBackend.Modules.Games.Models.Game", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uuid");
-
-                    b.Property<string>("Description")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.Property<string>("Publisher")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.Property<string>("Status")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.Property<string>("Version")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("Games");
-                });
-
             modelBuilder.Entity("NinetyBackend.Modules.MonitoringAlerts.Models.Alert", b =>
                 {
                     b.Property<Guid>("Id")
@@ -419,43 +391,6 @@ namespace NinetyBackend.Migrations
                     b.ToTable("RemoteCommands");
                 });
 
-            modelBuilder.Entity("NinetyBackend.Modules.Reservations.Models.Reservation", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uuid");
-
-                    b.Property<Guid>("BranchId")
-                        .HasColumnType("uuid");
-
-                    b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.Property<Guid>("CustomerId")
-                        .HasColumnType("uuid");
-
-                    b.Property<DateTime>("EndTime")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.Property<DateTime>("StartTime")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.Property<Guid>("StationId")
-                        .HasColumnType("uuid");
-
-                    b.Property<string>("Status")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("CustomerId", "StartTime");
-
-                    b.HasIndex("BranchId", "StationId", "StartTime", "EndTime");
-
-                    b.ToTable("Reservations");
-                });
-
             modelBuilder.Entity("NinetyBackend.Modules.Stations.Models.Agent", b =>
                 {
                     b.Property<Guid>("Id")
@@ -497,9 +432,6 @@ namespace NinetyBackend.Migrations
                     b.Property<Guid?>("AgentId")
                         .HasColumnType("uuid");
 
-                    b.Property<Guid?>("BranchId")
-                        .HasColumnType("uuid");
-
                     b.Property<string>("Code")
                         .IsRequired()
                         .HasColumnType("text");
@@ -523,85 +455,10 @@ namespace NinetyBackend.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("BranchId");
-
                     b.HasIndex("Code")
                         .IsUnique();
 
                     b.ToTable("GamingStations");
-                });
-
-            modelBuilder.Entity("NinetyBackend.Modules.Wallets.Models.Wallet", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uuid");
-
-                    b.Property<decimal>("Balance")
-                        .HasPrecision(18, 2)
-                        .HasColumnType("numeric(18,2)");
-
-                    b.Property<string>("Currency")
-                        .IsRequired()
-                        .HasMaxLength(3)
-                        .HasColumnType("character varying(3)");
-
-                    b.Property<Guid>("CustomerId")
-                        .HasColumnType("uuid");
-
-                    b.Property<long>("Version")
-                        .IsConcurrencyToken()
-                        .HasColumnType("bigint");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("CustomerId")
-                        .IsUnique();
-
-                    b.ToTable("Wallets");
-                });
-
-            modelBuilder.Entity("NinetyBackend.Modules.Wallets.Models.WalletTransaction", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uuid");
-
-                    b.Property<decimal>("Amount")
-                        .HasPrecision(18, 2)
-                        .HasColumnType("numeric(18,2)");
-
-                    b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.Property<string>("IdempotencyKey")
-                        .HasColumnType("text");
-
-                    b.Property<decimal>("NewBalance")
-                        .HasPrecision(18, 2)
-                        .HasColumnType("numeric(18,2)");
-
-                    b.Property<decimal>("PreviousBalance")
-                        .HasPrecision(18, 2)
-                        .HasColumnType("numeric(18,2)");
-
-                    b.Property<string>("Reason")
-                        .HasColumnType("text");
-
-                    b.Property<string>("Type")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.Property<Guid>("WalletId")
-                        .HasColumnType("uuid");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("WalletId", "IdempotencyKey")
-                        .IsUnique()
-                        .HasFilter("\"IdempotencyKey\" IS NOT NULL");
-
-                    b.ToTable("WalletTransactions");
                 });
 
             modelBuilder.Entity("PermissionRole", b =>
@@ -667,28 +524,6 @@ namespace NinetyBackend.Migrations
                     b.Navigation("User");
                 });
 
-            modelBuilder.Entity("NinetyBackend.Modules.Wallets.Models.Wallet", b =>
-                {
-                    b.HasOne("NinetyBackend.Modules.Auth.Models.User", "Customer")
-                        .WithMany()
-                        .HasForeignKey("CustomerId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Customer");
-                });
-
-            modelBuilder.Entity("NinetyBackend.Modules.Wallets.Models.WalletTransaction", b =>
-                {
-                    b.HasOne("NinetyBackend.Modules.Wallets.Models.Wallet", "Wallet")
-                        .WithMany("Transactions")
-                        .HasForeignKey("WalletId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
-                    b.Navigation("Wallet");
-                });
-
             modelBuilder.Entity("PermissionRole", b =>
                 {
                     b.HasOne("NinetyBackend.Modules.Auth.Models.Permission", null)
@@ -724,11 +559,6 @@ namespace NinetyBackend.Migrations
                     b.Navigation("ExternalLogins");
 
                     b.Navigation("RefreshTokens");
-                });
-
-            modelBuilder.Entity("NinetyBackend.Modules.Wallets.Models.Wallet", b =>
-                {
-                    b.Navigation("Transactions");
                 });
 #pragma warning restore 612, 618
         }
