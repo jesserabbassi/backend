@@ -3,6 +3,7 @@ namespace NinetyBackend.Modules.MonitoringAlerts.Models;
 public class Telemetry
 {
     public Guid Id { get; set; } = Guid.NewGuid();
+    public Guid EventId { get; set; }
     public Guid StationId { get; set; }
     public double CpuUsage { get; set; }
     public double GpuUsage { get; set; }

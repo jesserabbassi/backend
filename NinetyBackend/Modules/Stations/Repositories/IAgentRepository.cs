@@ -6,6 +6,7 @@ public interface IAgentRepository
 {
     Task<Agent?> GetByIdAsync(Guid id);
     Task<Agent?> GetByStationIdAsync(Guid stationId);
+    Task<List<Agent>> GetPendingAsync();
     Task AddAsync(Agent entity);
     Task UpdateAsync(Agent entity);
 }

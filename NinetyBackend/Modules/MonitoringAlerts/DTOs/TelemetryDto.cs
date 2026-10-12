@@ -1,6 +1,7 @@
 namespace NinetyBackend.Modules.MonitoringAlerts.DTOs;
 
 public record TelemetryDto(
+    Guid EventId,
     Guid StationId,
     double CpuUsage,
     double GpuUsage,

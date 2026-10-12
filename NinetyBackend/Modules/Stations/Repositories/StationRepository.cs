@@ -23,6 +23,11 @@ public class StationRepository : IStationRepository
         return _db.GamingStations.FirstOrDefaultAsync(s => s.Id == id);
     }
 
+    public Task<GamingStation?> GetByCodeAsync(string code)
+    {
+        return _db.GamingStations.FirstOrDefaultAsync(s => s.Code == code);
+    }
+
     public async Task AddAsync(GamingStation entity)
     {
         _db.GamingStations.Add(entity);

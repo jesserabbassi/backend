@@ -17,6 +17,8 @@ public enum StationStatus
 {
     Available,
     InUse,
+    Reserved,
+    Locked,
     Offline,
     Maintenance
 }

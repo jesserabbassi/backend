@@ -25,4 +25,17 @@
     <ProjectReference Include="..\NinetyBackend\NinetyBackend.csproj" />
   </ItemGroup>
 
+  <!-- Prevent transitive copying of content from referenced projects and exclude verification
+       folders that were being copied into the project output recursively. This avoids
+       creating deeply nested "verify-*" folders and long path copy failures during build. -->
+  <PropertyGroup>
+    <MSBuildCopyContentTransitively>false</MSBuildCopyContentTransitively>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <!-- Exclude any folder whose name starts with "verify-" from being treated as content/none -->
+    <None Remove="**\verify-*\**" />
+    <Content Remove="**\verify-*\**" />
+  </ItemGroup>
+
 </Project>

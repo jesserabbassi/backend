@@ -33,6 +33,10 @@ public class StationService : IStationService
         if (string.IsNullOrWhiteSpace(dto.Name))
             throw new InvalidOperationException("Station name is required.");
 
+        var existing = await _stationRepository.GetByCodeAsync(dto.Code.Trim());
+        if (existing != null)
+            throw new InvalidOperationException($"A station with code '{dto.Code.Trim()}' already exists.");
+
         var station = new GamingStation
         {
             Id = Guid.NewGuid(),

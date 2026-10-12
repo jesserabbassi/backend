@@ -9,10 +9,18 @@ public class Agent
     public AgentStatus Status { get; set; } = AgentStatus.Offline;
     public DateTime? LastHeartbeatAt { get; set; }
     public DateTime RegisteredAt { get; set; }
+    public DateTime? ApprovedAt { get; set; }
+    public DateTime? RejectedAt { get; set; }
+    public DateTime? RevokedAt { get; set; }
+    public string? BootstrapSecretHash { get; set; }
 }
 
 public enum AgentStatus
 {
+    Pending,
+    Approved,
+    Rejected,
+    Revoked,
     Online,
     Offline,
     Connecting

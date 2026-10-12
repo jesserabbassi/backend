@@ -5,6 +5,7 @@ namespace NinetyBackend.Modules.MonitoringAlerts.Repositories;
 public interface ITelemetryRepository
 {
     Task AddAsync(Telemetry telemetry, CancellationToken ct = default);
+    Task<bool> ExistsByEventIdAsync(Guid eventId, CancellationToken ct = default);
     Task<List<Telemetry>> GetHistoryAsync(Guid stationId, int take, CancellationToken ct = default);
     Task<Telemetry?> GetLatestAsync(Guid stationId, CancellationToken ct = default);
 }

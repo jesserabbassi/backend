@@ -27,8 +27,15 @@ public class MonitoringService(
             throw new KeyNotFoundException("Station not found.");
         }
 
+        if (dto.EventId == Guid.Empty)
+            throw new ArgumentException("Telemetry event id is required.", nameof(dto));
+
+        if (await telemetryRepository.ExistsByEventIdAsync(dto.EventId, ct))
+            return;
+
         var telemetry = new Telemetry
         {
+            EventId = dto.EventId,
             StationId = stationId,
             CpuUsage = Math.Clamp(dto.CpuUsage, 0, 100),
             GpuUsage = Math.Clamp(dto.GpuUsage, 0, 100),
@@ -43,7 +50,9 @@ public class MonitoringService(
         await telemetryRepository.AddAsync(telemetry, ct);
 
         station.LastSeenAt = DateTime.UtcNow;
-        station.Status = StationStatus.Available;
+        // Only recover from Offline — never overwrite InUse/Reserved/Locked/Maintenance
+        if (station.Status == StationStatus.Offline)
+            station.Status = StationStatus.Available;
         await stationRepository.UpdateAsync(station);
 
         if (dto.CpuUsage >= 95 || dto.GpuUsage >= 95 || dto.CpuTemperature >= 90 || dto.GpuTemperature >= 90)
@@ -89,6 +98,7 @@ public class MonitoringService(
     }
 
     private static TelemetryDto Map(Telemetry telemetry) => new(
+        telemetry.EventId,
         telemetry.StationId,
         telemetry.CpuUsage,
         telemetry.GpuUsage,

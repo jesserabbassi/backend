@@ -28,6 +28,7 @@ public class ApplicationDbContext : DbContext
     public DbSet<Game> Games => Set<Game>();
     public DbSet<GamingStation> GamingStations => Set<GamingStation>();
     public DbSet<Agent> Agents => Set<Agent>();
+    public DbSet<AgentRefreshToken> AgentRefreshTokens => Set<AgentRefreshToken>();
     public DbSet<Telemetry> Telemetries => Set<Telemetry>();
     public DbSet<Alert> Alerts => Set<Alert>();
     public DbSet<Wallet> Wallets => Set<Wallet>();
@@ -127,11 +128,25 @@ public class ApplicationDbContext : DbContext
             entity.Property(e => e.MachineName).IsRequired();
             entity.Property(e => e.Version).IsRequired();
             entity.Property(e => e.Status).HasConversion<string>();
+            entity.HasIndex(e => new { e.StationId, e.Status });
+            entity.HasOne<GamingStation>().WithMany().HasForeignKey(e => e.StationId).OnDelete(DeleteBehavior.Restrict);
+        });
+
+        modelBuilder.Entity<AgentRefreshToken>(entity =>
+        {
+            entity.HasKey(e => e.Id);
+            entity.HasIndex(e => e.TokenHash).IsUnique();
+            entity.HasIndex(e => new { e.AgentId, e.ExpiresAt });
+            entity.HasOne(e => e.Agent)
+                .WithMany()
+                .HasForeignKey(e => e.AgentId)
+                .OnDelete(DeleteBehavior.Cascade);
         });
 
         modelBuilder.Entity<Telemetry>(entity =>
         {
             entity.HasKey(e => e.Id);
+            entity.HasIndex(e => e.EventId).IsUnique();
             entity.HasIndex(e => new { e.StationId, e.Timestamp });
             entity.Property(e => e.NetworkStatus).HasMaxLength(128);
             entity.Property(e => e.Timestamp).IsRequired();

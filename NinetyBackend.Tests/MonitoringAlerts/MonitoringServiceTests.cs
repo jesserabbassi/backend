@@ -38,7 +38,20 @@ public class MonitoringServiceTests
         var stationRepo = new StationRepository(db);
         var service = new MonitoringService(telemetryRepo, alertRepo, stationRepo);
 
+        var eventId = Guid.NewGuid();
         await service.ProcessTelemetryAsync(stationId, new TelemetryDto(
+            eventId,
+            stationId,
+            99.5,
+            98.0,
+            50.0,
+            95.0,
+            96.0,
+            10,
+            "Connected",
+            DateTime.UtcNow), CancellationToken.None);
+        await service.ProcessTelemetryAsync(stationId, new TelemetryDto(
+            eventId,
             stationId,
             99.5,
             98.0,
@@ -54,5 +67,6 @@ public class MonitoringServiceTests
 
         Assert.NotNull(latest);
         Assert.NotEmpty(alerts);
+        Assert.Single(await db.Telemetries.ToListAsync());
     }
 }

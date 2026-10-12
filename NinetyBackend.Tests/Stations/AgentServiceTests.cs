@@ -4,6 +4,7 @@ using NinetyBackend.Modules.Stations.Models;
 using NinetyBackend.Modules.Stations.Repositories;
 using NinetyBackend.Modules.Stations.Services;
 using Xunit;
+using NinetyBackend.Modules.Auth.Services;
 
 namespace NinetyBackend.Tests.Stations;
 
@@ -11,11 +12,13 @@ public class AgentServiceTests
 {
     private readonly Mock<IAgentRepository> _agentRepo = new();
     private readonly Mock<IStationRepository> _stationRepo = new();
+    private readonly Mock<IAgentRefreshTokenRepository> _refreshRepo = new();
+    private readonly Mock<IJwtService> _jwt = new();
     private readonly AgentService _service;
 
     public AgentServiceTests()
     {
-        _service = new AgentService(_agentRepo.Object, _stationRepo.Object);
+        _service = new AgentService(_agentRepo.Object, _stationRepo.Object, _refreshRepo.Object, _jwt.Object);
     }
 
     [Fact]
@@ -46,36 +49,44 @@ public class AgentServiceTests
         Assert.Equal(stationId, result.StationId);
         Assert.Equal("PC-01", result.MachineName);
         Assert.Equal("1.0.0", result.Version);
-        Assert.Equal("Online", result.Status);
-        Assert.NotNull(result.LastHeartbeatAt);
-
-        Assert.Equal(StationStatus.Available, station.Status);
-        Assert.NotNull(station.AgentId);
+        Assert.Equal("Pending", result.Status);
+        Assert.Null(result.LastHeartbeatAt);
         _agentRepo.Verify(r => r.AddAsync(It.Is<Agent>(a => a.StationId == stationId && a.MachineName == "PC-01")), Times.Once);
         _stationRepo.Verify(r => r.UpdateAsync(station), Times.Once);
     }
 
     [Fact]
-    public async Task RegisterAsync_WhenExistingAgent_UpdatesAgentAndStation()
+    public async Task RegisterAsync_WhenExistingAgent_RejectsDuplicate()
     {
         var stationId = Guid.NewGuid();
         var agentId = Guid.NewGuid();
         var station = new GamingStation { Id = stationId, Code = "ST-01", Name = "Station 1", Status = StationStatus.Offline };
-        var existingAgent = new Agent { Id = agentId, StationId = stationId, MachineName = "OLD-PC", Version = "0.9.0", Status = AgentStatus.Offline };
+        var existingAgent = new Agent { Id = agentId, StationId = stationId, MachineName = "OLD-PC", Version = "0.9.0", Status = AgentStatus.Online };
 
         _stationRepo.Setup(r => r.GetByIdAsync(stationId)).ReturnsAsync(station);
         _agentRepo.Setup(r => r.GetByStationIdAsync(stationId)).ReturnsAsync(existingAgent);
-        _agentRepo.Setup(r => r.UpdateAsync(existingAgent)).Returns(Task.CompletedTask);
-        _stationRepo.Setup(r => r.UpdateAsync(station)).Returns(Task.CompletedTask);
 
         var dto = new RegisterAgentDto(stationId, "NEW-PC", "1.1.0");
-        var result = await _service.RegisterAsync(dto);
+        await Assert.ThrowsAsync<InvalidOperationException>(() => _service.RegisterAsync(dto));
+    }
 
-        Assert.NotNull(result);
-        Assert.Equal("NEW-PC", existingAgent.MachineName);
-        Assert.Equal("1.1.0", existingAgent.Version);
-        Assert.Equal(AgentStatus.Online, existingAgent.Status);
-        _agentRepo.Verify(r => r.UpdateAsync(existingAgent), Times.Once);
+    [Fact]
+    public async Task IssueTokensAsync_WhenAgentIsPending_RejectsCredentialIssuance()
+    {
+        var agentId = Guid.NewGuid();
+        var stationId = Guid.NewGuid();
+        _agentRepo.Setup(r => r.GetByIdAsync(agentId)).ReturnsAsync(new Agent
+        {
+            Id = agentId,
+            StationId = stationId,
+            MachineName = "PC-01",
+            Version = "1.0.0",
+            Status = AgentStatus.Pending
+        });
+        _stationRepo.Setup(r => r.GetByIdAsync(stationId)).ReturnsAsync(new GamingStation { Id = stationId });
+
+        await Assert.ThrowsAsync<UnauthorizedAccessException>(() => _service.IssueTokensAsync(agentId));
+        _jwt.Verify(j => j.GenerateAgentAccessToken(It.IsAny<Guid>()), Times.Never);
     }
 
     [Fact]

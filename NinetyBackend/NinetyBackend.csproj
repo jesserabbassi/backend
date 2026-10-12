@@ -47,4 +47,27 @@
     <Folder Include="Modules\Stations\Services\" />
   </ItemGroup>
 
+  <!-- Prevent copying of deeply nested verification folders and static web assets manifests which
+       cause long path copy failures during build. -->
+  <PropertyGroup>
+    <MSBuildCopyContentTransitively>false</MSBuildCopyContentTransitively>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <!-- Exclude verification folders from being treated as content so they won't be copied to output -->
+    <Content Remove="verify-final-tests\**" />
+    <None Remove="verify-final-tests\**" />
+    <!-- Exclude any other folders that start with verify- anywhere in the project -->
+    <Content Remove="**\verify-*\**" />
+    <None Remove="**\verify-*\**" />
+
+    <!-- Ensure staticwebassets manifests are never copied to output (they belong in obj/ not in source) -->
+    <None Update="**\*.staticwebassets.*.json">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </None>
+    <Content Update="**\*.staticwebassets.*.json">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </Content>
+  </ItemGroup>
+
 </Project>

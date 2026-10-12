@@ -348,6 +348,9 @@ namespace NinetyBackend.Migrations
                     b.Property<double>("CpuUsage")
                         .HasColumnType("double precision");
 
+                    b.Property<Guid>("EventId")
+                        .HasColumnType("uuid");
+
                     b.Property<double>("FanSpeed")
                         .HasColumnType("double precision");
 
@@ -371,6 +374,9 @@ namespace NinetyBackend.Migrations
                         .HasColumnType("timestamp with time zone");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("EventId")
+                        .IsUnique();
 
                     b.HasIndex("StationId", "Timestamp");
 
@@ -462,6 +468,12 @@ namespace NinetyBackend.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uuid");
 
+                    b.Property<DateTime?>("ApprovedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("BootstrapSecretHash")
+                        .HasColumnType("text");
+
                     b.Property<DateTime?>("LastHeartbeatAt")
                         .HasColumnType("timestamp with time zone");
 
@@ -470,6 +482,12 @@ namespace NinetyBackend.Migrations
                         .HasColumnType("text");
 
                     b.Property<DateTime>("RegisteredAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<DateTime?>("RejectedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<DateTime?>("RevokedAt")
                         .HasColumnType("timestamp with time zone");
 
                     b.Property<Guid>("StationId")
@@ -485,7 +503,47 @@ namespace NinetyBackend.Migrations
 
                     b.HasKey("Id");
 
+                    b.HasIndex("StationId", "Status");
+
                     b.ToTable("Agents");
+                });
+
+            modelBuilder.Entity("NinetyBackend.Modules.Stations.Models.AgentRefreshToken", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid>("AgentId")
+                        .HasColumnType("uuid");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("CreatedByIp")
+                        .HasColumnType("text");
+
+                    b.Property<DateTime>("ExpiresAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<Guid?>("ReplacedByTokenId")
+                        .HasColumnType("uuid");
+
+                    b.Property<DateTime?>("RevokedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("TokenHash")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("TokenHash")
+                        .IsUnique();
+
+                    b.HasIndex("AgentId", "ExpiresAt");
+
+                    b.ToTable("AgentRefreshTokens");
                 });
 
             modelBuilder.Entity("NinetyBackend.Modules.Stations.Models.GamingStation", b =>
@@ -665,6 +723,26 @@ namespace NinetyBackend.Migrations
                         .IsRequired();
 
                     b.Navigation("User");
+                });
+
+            modelBuilder.Entity("NinetyBackend.Modules.Stations.Models.Agent", b =>
+                {
+                    b.HasOne("NinetyBackend.Modules.Stations.Models.GamingStation", null)
+                        .WithMany()
+                        .HasForeignKey("StationId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("NinetyBackend.Modules.Stations.Models.AgentRefreshToken", b =>
+                {
+                    b.HasOne("NinetyBackend.Modules.Stations.Models.Agent", "Agent")
+                        .WithMany()
+                        .HasForeignKey("AgentId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Agent");
                 });
 
             modelBuilder.Entity("NinetyBackend.Modules.Wallets.Models.Wallet", b =>
