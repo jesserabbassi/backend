@@ -34,7 +34,9 @@ public static class DotEnv
                 value = value.Substring(1, value.Length - 2);
             }
 
-            Environment.SetEnvironmentVariable(key, value);
+            // Process environment wins over local .env values.
+            if (Environment.GetEnvironmentVariable(key) is null)
+                Environment.SetEnvironmentVariable(key, value);
             result[key] = value;
 
             MapKeyAliases(key, value, result);
@@ -153,6 +155,7 @@ public static class DotEnv
     {
         result[aliasKey] = value;
         var envKey = aliasKey.Replace(":", "__");
-        Environment.SetEnvironmentVariable(envKey, value);
+        if (Environment.GetEnvironmentVariable(envKey) is null)
+            Environment.SetEnvironmentVariable(envKey, value);
     }
 }

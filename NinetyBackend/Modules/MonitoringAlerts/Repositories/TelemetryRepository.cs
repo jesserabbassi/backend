@@ -12,6 +12,9 @@ public class TelemetryRepository(ApplicationDbContext db) : ITelemetryRepository
         await db.SaveChangesAsync(ct);
     }
 
+    public Task<bool> ExistsByEventIdAsync(Guid eventId, CancellationToken ct = default) =>
+        db.Telemetries.AnyAsync(t => t.EventId == eventId, ct);
+
     public async Task<List<Telemetry>> GetHistoryAsync(Guid stationId, int take, CancellationToken ct = default)
     {
         return await db.Telemetries

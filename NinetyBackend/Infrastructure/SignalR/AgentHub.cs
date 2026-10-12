@@ -16,8 +16,9 @@ public sealed class AgentHub(
 {
     private static readonly TimeSpan TelemetryInterval = TimeSpan.FromSeconds(1);
 
-    public async Task<AgentConnectionAccepted> ConnectAgent(Guid stationId, CancellationToken ct = default)
+    public async Task<AgentConnectionAccepted> ConnectAgent(Guid stationId)
     {
+        var ct = Context.ConnectionAborted;
         var agentId = GetAgentId();
         var agent = await agentService.ConnectAsync(agentId, stationId, ct);
         if (agent is null)
@@ -34,8 +35,9 @@ public sealed class AgentHub(
         return accepted;
     }
 
-    public async Task Heartbeat(CancellationToken ct = default)
+    public async Task Heartbeat()
     {
+        var ct = Context.ConnectionAborted;
         var connection = RequireConnection();
         if (await agentService.HeartbeatAsync(connection.AgentId) is null)
             throw new HubException("Agent not registered.");
@@ -44,8 +46,9 @@ public sealed class AgentHub(
             new ServerNotification("HeartbeatAccepted", DateTime.UtcNow), ct);
     }
 
-    public async Task SendTelemetry(TelemetryDto telemetry, CancellationToken ct = default)
+    public async Task SendTelemetry(TelemetryDto telemetry)
     {
+        var ct = Context.ConnectionAborted;
         var connection = RequireConnection();
         ValidateTelemetry(telemetry);
         if (telemetry.StationId != connection.StationId)

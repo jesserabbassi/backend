@@ -23,6 +23,8 @@ public class AgentRepository : IAgentRepository
         return _db.Agents.FirstOrDefaultAsync(a => a.StationId == stationId);
     }
 
+    public Task<List<Agent>> GetPendingAsync() => _db.Agents.Where(a => a.Status == AgentStatus.Pending).ToListAsync();
+
     public async Task AddAsync(Agent entity)
     {
         _db.Agents.Add(entity);

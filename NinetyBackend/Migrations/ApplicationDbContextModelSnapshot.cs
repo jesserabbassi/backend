@@ -232,6 +232,76 @@ namespace NinetyBackend.Migrations
                     b.ToTable("Users");
                 });
 
+            modelBuilder.Entity("NinetyBackend.Modules.Customers.Models.Customer", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("Email")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("FirstName")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("LastName")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("Phone")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("Status")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<Guid?>("UserId")
+                        .HasColumnType("uuid");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("Email");
+
+                    b.ToTable("Customers");
+                });
+
+            modelBuilder.Entity("NinetyBackend.Modules.Games.Models.Game", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("Description")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("Publisher")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("Status")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("Version")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Games");
+                });
+
             modelBuilder.Entity("NinetyBackend.Modules.MonitoringAlerts.Models.Alert", b =>
                 {
                     b.Property<Guid>("Id")
@@ -278,6 +348,9 @@ namespace NinetyBackend.Migrations
                     b.Property<double>("CpuUsage")
                         .HasColumnType("double precision");
 
+                    b.Property<Guid>("EventId")
+                        .HasColumnType("uuid");
+
                     b.Property<double>("FanSpeed")
                         .HasColumnType("double precision");
 
@@ -302,9 +375,91 @@ namespace NinetyBackend.Migrations
 
                     b.HasKey("Id");
 
+                    b.HasIndex("EventId")
+                        .IsUnique();
+
                     b.HasIndex("StationId", "Timestamp");
 
                     b.ToTable("Telemetries");
+                });
+
+            modelBuilder.Entity("NinetyBackend.Modules.RemoteControl.Models.RemoteCommand", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<DateTime?>("AcknowledgedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<DateTime?>("ExpiresAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("PayloadJson")
+                        .HasColumnType("text");
+
+                    b.Property<string>("ResultMessage")
+                        .HasColumnType("text");
+
+                    b.Property<DateTime?>("SentAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<Guid>("StationId")
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("Status")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("Type")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("StationId");
+
+                    b.ToTable("RemoteCommands");
+                });
+
+            modelBuilder.Entity("NinetyBackend.Modules.Reservations.Models.Reservation", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid>("BranchId")
+                        .HasColumnType("uuid");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<Guid>("CustomerId")
+                        .HasColumnType("uuid");
+
+                    b.Property<DateTime>("EndTime")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<DateTime>("StartTime")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<Guid>("StationId")
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("Status")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("CustomerId", "StartTime");
+
+                    b.HasIndex("BranchId", "StationId", "StartTime", "EndTime");
+
+                    b.ToTable("Reservations");
                 });
 
             modelBuilder.Entity("NinetyBackend.Modules.Stations.Models.Agent", b =>
@@ -312,6 +467,12 @@ namespace NinetyBackend.Migrations
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uuid");
+
+                    b.Property<DateTime?>("ApprovedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("BootstrapSecretHash")
+                        .HasColumnType("text");
 
                     b.Property<DateTime?>("LastHeartbeatAt")
                         .HasColumnType("timestamp with time zone");
@@ -321,6 +482,12 @@ namespace NinetyBackend.Migrations
                         .HasColumnType("text");
 
                     b.Property<DateTime>("RegisteredAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<DateTime?>("RejectedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<DateTime?>("RevokedAt")
                         .HasColumnType("timestamp with time zone");
 
                     b.Property<Guid>("StationId")
@@ -336,7 +503,47 @@ namespace NinetyBackend.Migrations
 
                     b.HasKey("Id");
 
+                    b.HasIndex("StationId", "Status");
+
                     b.ToTable("Agents");
+                });
+
+            modelBuilder.Entity("NinetyBackend.Modules.Stations.Models.AgentRefreshToken", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid>("AgentId")
+                        .HasColumnType("uuid");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("CreatedByIp")
+                        .HasColumnType("text");
+
+                    b.Property<DateTime>("ExpiresAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<Guid?>("ReplacedByTokenId")
+                        .HasColumnType("uuid");
+
+                    b.Property<DateTime?>("RevokedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("TokenHash")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("TokenHash")
+                        .IsUnique();
+
+                    b.HasIndex("AgentId", "ExpiresAt");
+
+                    b.ToTable("AgentRefreshTokens");
                 });
 
             modelBuilder.Entity("NinetyBackend.Modules.Stations.Models.GamingStation", b =>
@@ -346,6 +553,9 @@ namespace NinetyBackend.Migrations
                         .HasColumnType("uuid");
 
                     b.Property<Guid?>("AgentId")
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid?>("BranchId")
                         .HasColumnType("uuid");
 
                     b.Property<string>("Code")
@@ -370,6 +580,8 @@ namespace NinetyBackend.Migrations
                         .HasColumnType("timestamp with time zone");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("BranchId");
 
                     b.HasIndex("Code")
                         .IsUnique();
@@ -511,6 +723,26 @@ namespace NinetyBackend.Migrations
                         .IsRequired();
 
                     b.Navigation("User");
+                });
+
+            modelBuilder.Entity("NinetyBackend.Modules.Stations.Models.Agent", b =>
+                {
+                    b.HasOne("NinetyBackend.Modules.Stations.Models.GamingStation", null)
+                        .WithMany()
+                        .HasForeignKey("StationId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("NinetyBackend.Modules.Stations.Models.AgentRefreshToken", b =>
+                {
+                    b.HasOne("NinetyBackend.Modules.Stations.Models.Agent", "Agent")
+                        .WithMany()
+                        .HasForeignKey("AgentId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Agent");
                 });
 
             modelBuilder.Entity("NinetyBackend.Modules.Wallets.Models.Wallet", b =>
