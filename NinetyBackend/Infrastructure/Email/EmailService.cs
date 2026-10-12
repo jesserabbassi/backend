@@ -2,6 +2,8 @@ using MailKit.Net.Smtp;
 using MimeKit;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
+using System.Net.Security;
+using System.Security.Cryptography.X509Certificates;
 
 namespace NinetyBackend.Infrastructure.Email;
 
@@ -38,8 +40,7 @@ public class EmailService : IEmailService
 
         if (string.IsNullOrEmpty(host))
         {
-            _logger.LogWarning("SMTP host not configured. Skipping email send to {To}", to);
-            return;
+            throw new EmailDeliveryException("SMTP host is not configured.");
         }
 
         int port = int.TryParse(portStr, out var p) ? p : 587;
@@ -53,6 +54,11 @@ public class EmailService : IEmailService
         message.Body = bodyBuilder.ToMessageBody();
 
         using var client = new SmtpClient();
+        client.ServerCertificateValidationCallback = (_, _, chain, errors) =>
+            errors == SslPolicyErrors.None ||
+            (errors == SslPolicyErrors.RemoteCertificateChainErrors &&
+             chain is { ChainStatus.Length: > 0 } &&
+             chain.ChainStatus.All(status => status.Status == X509ChainStatusFlags.RevocationStatusUnknown));
         try
         {
             await client.ConnectAsync(host, port, MailKit.Security.SecureSocketOptions.Auto);
@@ -66,6 +72,13 @@ public class EmailService : IEmailService
         catch (Exception ex)
         {
             _logger.LogError(ex, "Failed to send email to {To}", to);
+            throw new EmailDeliveryException("Verification email could not be sent.", ex);
         }
     }
+}
+
+public sealed class EmailDeliveryException : Exception
+{
+    public EmailDeliveryException(string message, Exception? innerException = null)
+        : base(message, innerException) { }
 }

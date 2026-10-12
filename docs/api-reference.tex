@@ -1,0 +1,63 @@
+\documentclass[10pt]{article}
+\usepackage[a4paper,landscape,margin=15mm]{geometry}
+\usepackage[T1]{fontenc}
+\usepackage{lmodern}
+\usepackage{longtable}
+\usepackage{array}
+\usepackage{hyperref}
+\setlength{\parindent}{0pt}
+\setlength{\tabcolsep}{4pt}
+\renewcommand{\arraystretch}{1.18}
+\begin{document}
+\footnotesize
+\begin{longtable}{|>{\raggedright\arraybackslash}p{53mm}|>{\raggedright\arraybackslash}p{66mm}|>{\raggedright\arraybackslash}p{78mm}|>{\raggedright\arraybackslash}p{55mm}|}
+\hline
+\textbf{API endpoint} & \textbf{Description} & \textbf{Input} & \textbf{Output}\\\hline
+\endfirsthead
+\hline
+\textbf{API endpoint} & \textbf{Description} & \textbf{Input} & \textbf{Output}\\\hline
+\endhead
+
+\textbf{POST}\newline\path|/api/Auth/register| & Create account; email registration code. & JSON: firstName, lastName, email, password. & 200: userId, email, requiresOtp=true, otpPurpose=0. 400/503: message.\\\hline
+\textbf{POST}\newline\path|/api/Auth/login| & Check password; email login or registration code. & JSON: email, password. & 200: userId, email, requiresOtp=true, otpPurpose 0 or 1. 401/503: message.\\\hline
+\textbf{POST}\newline\path|/api/Auth/verify-otp| & Verify code; issue access and refresh tokens. & JSON: userId (GUID), code, purpose (0 registration, 1 login; default 1). & 200: userId, email, requiresOtp=false, accessToken, refreshToken, expiresAt. 400: message.\\\hline
+\textbf{POST}\newline\path|/api/Auth/refresh| & Rotate refresh token and renew session. & JSON: token, or refreshToken cookie. & 200: new accessToken, refreshToken, expiresAt. 400/401: message.\\\hline
+\textbf{POST}\newline\path|/api/Auth/logout| & Revoke cookie refresh token; clear cookies. & No body; optional refreshToken cookie. & 200: message.\\\hline
+\textbf{GET}\newline\path|/api/Auth/google| & Start Google OAuth sign-in. & No body. & Redirect to Google.\\\hline
+\textbf{GET}\newline\path|/api/Auth/google/callback| & Finish Google OAuth sign-in. & OAuth query code/state from provider. & 200: userId, email, accessToken, refreshToken, expiresAt. 400/401: message.\\\hline
+\textbf{GET}\newline\path|/api/Auth/profile| & Read current user profile. Auth required. & Bearer JWT or accessToken cookie. & 200: id, email, isVerified, status, createdAt, lastLoginAt, roles. 401/404.\\\hline
+\textbf{POST}\newline\path|/api/Auth/change-password| & Change current user's password. Auth required. & JSON: currentPassword, newPassword. & 200: message. 400/401: failure.\\\hline
+
+\textbf{GET}\newline\path|/api/Station| & List stations. Admin/Supervisor. & Auth JWT; no body. & 200: array of station objects.\\\hline
+\textbf{GET}\newline\path|/api/Station/{id}| & Read station. Admin/Supervisor. & Station GUID in path. & 200: id, code, name, status, lastSeenAt. 404: message.\\\hline
+\textbf{POST}\newline\path|/api/Station| & Create station. Admin/Supervisor. & JSON: code, name (nonblank). & 201: station object; Location header. 400: message.\\\hline
+\textbf{PUT}\newline\path|/api/Station/{id}| & Rename station. Admin/Supervisor. & Station GUID; JSON: name (nonblank). & 200: updated station object. 400/404: message.\\\hline
+\textbf{DELETE}\newline\path|/api/Station/{id}| & Delete station. Admin/Supervisor. & Station GUID; no body. & 200: message. 404: message.\\\hline
+\textbf{GET}\newline\path|/api/Station/{id}/status| & Read station availability. Admin/Supervisor. & Station GUID. & 200: status (Available, InUse, Offline, Maintenance). 404: message.\\\hline
+
+\textbf{POST}\newline\path|/api/Agent/register| & Register or update agent on station. Admin/Supervisor. & JSON: stationId (GUID), machineName, version. & 200: id, stationId, machineName, version, status, lastHeartbeatAt. 400: message.\\\hline
+\textbf{POST}\newline\path|/api/Agent/{id}/token| & Issue agent JWT. Admin/Supervisor. & Agent GUID; no body. & 200: agentId, stationId, accessToken. 404: message.\\\hline
+\textbf{POST}\newline\path|/api/Agent/{id}/heartbeat| & Update agent liveness. Admin/Supervisor. & Agent GUID; no body. & 200: agent object. 404: message.\\\hline
+\textbf{POST}\newline\path|/api/Agent/{id}/disconnect| & Mark agent and station Offline. Admin/Supervisor. & Agent GUID; no body. & 200: message. 404: message.\\\hline
+
+\textbf{POST}\newline\path|/api/monitoring/stations/{stationId}/telemetry| & Store sample; update status and threshold alert. Admin/Supervisor or assigned agent. & Station GUID; JSON: stationId, cpuUsage, gpuUsage, ramUsage, cpuTemperature, gpuTemperature, fanSpeed, networkStatus, timestamp. & 200: message. 403 or 404: error.\\\hline
+\textbf{GET}\newline\path|/api/monitoring/stations/{stationId}/telemetry/latest| & Read newest sample. Admin/Supervisor. & Station GUID. & 200: telemetry object. 403/404.\\\hline
+\textbf{GET}\newline\path|/api/monitoring/stations/{stationId}/telemetry| & Read sample history. Admin/Supervisor. & Station GUID; optional take query (default 100, max 500). & 200: array of telemetry objects. 403.\\\hline
+\textbf{GET}\newline\path|/api/monitoring/stations/{stationId}/alerts| & List unresolved station alerts. Admin/Supervisor. & Station GUID. & 200: array of alert objects. 403.\\\hline
+\textbf{POST}\newline\path|/api/monitoring/alerts/{alertId}/resolve| & Resolve alert. Admin/Supervisor. & Alert GUID; no body. & 200: message. 403/404.\\\hline
+
+\textbf{GET}\newline\path|/api/wallet| & Read or create caller's wallet. Auth required. & User JWT; no body. & 200: id, customerId, balance, currency, version.\\\hline
+\textbf{GET}\newline\path|/api/wallet/transactions| & List caller's wallet transactions. Auth required. & User JWT; no body. & 200: array of transaction objects.\\\hline
+\textbf{POST}\newline\path|/api/wallet/credit| & Add funds once per idempotency key. Auth required. & JSON: amount $>0$ (2 decimals max), idempotencyKey, optional reason. & 200: transaction object (type CREDIT).\\\hline
+\textbf{POST}\newline\path|/api/wallet/debit| & Subtract funds if balance suffices. Auth required. & JSON: amount $>0$ (2 decimals max), idempotencyKey, optional reason. & 200: transaction object (type DEBIT).\\\hline
+
+\textbf{POST}\newline\path|/api/payment| & Record payment on caller's wallet. Auth required. & JSON: amount $>0$ (2 decimals max), walletId, idempotencyKey. & 200: transaction object (type PAYMENT).\\\hline
+\textbf{POST}\newline\path|/api/payment/refund| & Credit eligible earlier payment or credit. Auth required. & JSON: transactionId, optional reason. & 200: transaction object (type REFUND).\\\hline
+
+\textbf{GET}\newline\path|/health| & Report registered health checks. Public. & No input. & 200/503: HealthChecks UI JSON.\\\hline
+\textbf{GET}\newline\path|/swagger| & Interactive API explorer; Development only. & No input. & Swagger UI HTML.\\\hline
+\textbf{SignalR}\newline\path|/hubs/stations| & Station hub; connection lifecycle only. Public. & SignalR negotiate/WebSocket handshake. & Connected/disconnected events; no callable methods.\\\hline
+\textbf{SignalR}\newline\path|/hubs/agents| & Agent connection, heartbeat, telemetry. Auth required. & ConnectAgent(stationId), Heartbeat(), SendTelemetry(telemetry). & ConnectionAccepted, ServerNotification, completion or hub error.\\\hline
+
+\end{longtable}
+\end{document}

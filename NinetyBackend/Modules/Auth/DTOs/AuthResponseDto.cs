@@ -1,3 +1,5 @@
+using NinetyBackend.Modules.Auth.Models;
+
 namespace NinetyBackend.Modules.Auth.DTOs;
 
 public record AuthResponseDto(
@@ -6,5 +8,6 @@ public record AuthResponseDto(
     bool RequiresOtp,
     string? AccessToken = null,
     string? RefreshToken = null,
-    DateTime? ExpiresAt = null
+    DateTime? ExpiresAt = null,
+    OtpPurpose? OtpPurpose = null
 );

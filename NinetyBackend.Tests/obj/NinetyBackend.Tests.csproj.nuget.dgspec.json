@@ -1,40 +1,33 @@
 {
   "format": 1,
   "restore": {
-    "C:\\Users\\USER\\Documents\\CSTAM\\future-owners\\backend\\NinetyBackend\\NinetyBackend.Tests\\NinetyBackend.Tests.csproj": {}
+    "/Users/mohamedazizsaad/Projects/backend/NinetyBackend.Tests/NinetyBackend.Tests.csproj": {}
   },
   "projects": {
-    "C:\\Users\\USER\\Documents\\CSTAM\\future-owners\\backend\\NinetyBackend\\NinetyBackend.Tests\\NinetyBackend.Tests.csproj": {
+    "/Users/mohamedazizsaad/Projects/backend/NinetyBackend.Tests/NinetyBackend.Tests.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\USER\\Documents\\CSTAM\\future-owners\\backend\\NinetyBackend\\NinetyBackend.Tests\\NinetyBackend.Tests.csproj",
+        "projectUniqueName": "/Users/mohamedazizsaad/Projects/backend/NinetyBackend.Tests/NinetyBackend.Tests.csproj",
         "projectName": "NinetyBackend.Tests",
-        "projectPath": "C:\\Users\\USER\\Documents\\CSTAM\\future-owners\\backend\\NinetyBackend\\NinetyBackend.Tests\\NinetyBackend.Tests.csproj",
-        "packagesPath": "C:\\Users\\USER\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\USER\\Documents\\CSTAM\\future-owners\\backend\\NinetyBackend\\NinetyBackend.Tests\\obj\\",
+        "projectPath": "/Users/mohamedazizsaad/Projects/backend/NinetyBackend.Tests/NinetyBackend.Tests.csproj",
+        "packagesPath": "/Users/mohamedazizsaad/.nuget/packages/",
+        "outputPath": "/Users/mohamedazizsaad/Projects/backend/NinetyBackend.Tests/obj/",
         "projectStyle": "PackageReference",
-        "fallbackFolders": [
-          "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
-        ],
         "configFilePaths": [
-          "C:\\Users\\USER\\AppData\\Roaming\\NuGet\\NuGet.Config",
-          "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.FallbackLocation.config",
-          "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
+          "/Users/mohamedazizsaad/.nuget/NuGet/NuGet.Config"
         ],
         "originalTargetFrameworks": [
           "net9.0"
         ],
         "sources": {
-          "C:\\Program Files (x86)\\Microsoft SDKs\\NuGetPackages\\": {},
-          "C:\\Program Files\\dotnet\\library-packs": {},
           "https://api.nuget.org/v3/index.json": {}
         },
         "frameworks": {
           "net9.0": {
             "targetAlias": "net9.0",
             "projectReferences": {
-              "C:\\Users\\USER\\Documents\\CSTAM\\future-owners\\backend\\NinetyBackend\\NinetyBackend\\NinetyBackend.csproj": {
-                "projectPath": "C:\\Users\\USER\\Documents\\CSTAM\\future-owners\\backend\\NinetyBackend\\NinetyBackend\\NinetyBackend.csproj"
+              "/Users/mohamedazizsaad/Projects/backend/NinetyBackend/NinetyBackend.csproj": {
+                "projectPath": "/Users/mohamedazizsaad/Projects/backend/NinetyBackend/NinetyBackend.csproj"
               }
             }
           }
@@ -96,33 +89,26 @@
               "privateAssets": "all"
             }
           },
-          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\9.0.311/PortableRuntimeIdentifierGraph.json"
+          "runtimeIdentifierGraphPath": "/usr/local/share/dotnet/sdk/9.0.306/PortableRuntimeIdentifierGraph.json"
         }
       }
     },
-    "C:\\Users\\USER\\Documents\\CSTAM\\future-owners\\backend\\NinetyBackend\\NinetyBackend\\NinetyBackend.csproj": {
+    "/Users/mohamedazizsaad/Projects/backend/NinetyBackend/NinetyBackend.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\USER\\Documents\\CSTAM\\future-owners\\backend\\NinetyBackend\\NinetyBackend\\NinetyBackend.csproj",
+        "projectUniqueName": "/Users/mohamedazizsaad/Projects/backend/NinetyBackend/NinetyBackend.csproj",
         "projectName": "NinetyBackend",
-        "projectPath": "C:\\Users\\USER\\Documents\\CSTAM\\future-owners\\backend\\NinetyBackend\\NinetyBackend\\NinetyBackend.csproj",
-        "packagesPath": "C:\\Users\\USER\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\USER\\Documents\\CSTAM\\future-owners\\backend\\NinetyBackend\\NinetyBackend\\obj\\",
+        "projectPath": "/Users/mohamedazizsaad/Projects/backend/NinetyBackend/NinetyBackend.csproj",
+        "packagesPath": "/Users/mohamedazizsaad/.nuget/packages/",
+        "outputPath": "/Users/mohamedazizsaad/Projects/backend/NinetyBackend/obj/",
         "projectStyle": "PackageReference",
-        "fallbackFolders": [
-          "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
-        ],
         "configFilePaths": [
-          "C:\\Users\\USER\\AppData\\Roaming\\NuGet\\NuGet.Config",
-          "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.FallbackLocation.config",
-          "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
+          "/Users/mohamedazizsaad/.nuget/NuGet/NuGet.Config"
         ],
         "originalTargetFrameworks": [
           "net9.0"
         ],
         "sources": {
-          "C:\\Program Files (x86)\\Microsoft SDKs\\NuGetPackages\\": {},
-          "C:\\Program Files\\dotnet\\library-packs": {},
           "https://api.nuget.org/v3/index.json": {}
         },
         "frameworks": {
@@ -229,7 +215,7 @@
               "privateAssets": "all"
             }
           },
-          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\9.0.311/PortableRuntimeIdentifierGraph.json"
+          "runtimeIdentifierGraphPath": "/usr/local/share/dotnet/sdk/9.0.306/PortableRuntimeIdentifierGraph.json"
         }
       }
     }

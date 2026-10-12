@@ -82,6 +82,9 @@ public static class DotEnv
         var currentDirFile = Path.Combine(Directory.GetCurrentDirectory(), filePath);
         if (File.Exists(currentDirFile)) return currentDirFile;
 
+        var projectDirFile = Path.Combine(Directory.GetCurrentDirectory(), "NinetyBackend", filePath);
+        if (File.Exists(projectDirFile)) return projectDirFile;
+
         return null;
     }
 

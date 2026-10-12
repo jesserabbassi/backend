@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Google;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using NinetyBackend.Infrastructure.Email;
 using NinetyBackend.Modules.Auth.DTOs;
 using NinetyBackend.Modules.Auth.Services;
 
@@ -33,6 +34,10 @@ public class AuthController : ControllerBase
         {
             return BadRequest(new { message = ex.Message });
         }
+        catch (EmailDeliveryException)
+        {
+            return StatusCode(503, new { message = "Verification email could not be sent. Please try again later." });
+        }
     }
 
     [HttpPost("login")]
@@ -53,6 +58,10 @@ public class AuthController : ControllerBase
         catch (UnauthorizedAccessException ex)
         {
             return Unauthorized(new { message = ex.Message });
+        }
+        catch (EmailDeliveryException)
+        {
+            return StatusCode(503, new { message = "Verification email could not be sent. Please try again later." });
         }
     }
 

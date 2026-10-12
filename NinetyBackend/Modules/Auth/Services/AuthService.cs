@@ -58,7 +58,7 @@ public class AuthService : IAuthService
         await _userRepository.CreateAsync(user);
         await _otpService.SendOtpAsync(user, OtpPurpose.Registration);
 
-        return new AuthResponseDto(user.Id, user.Email, RequiresOtp: true);
+        return new AuthResponseDto(user.Id, user.Email, RequiresOtp: true, OtpPurpose: OtpPurpose.Registration);
     }
 
     public async Task<AuthResponseDto> LoginAsync(LoginDto dto, string? ipAddress = null)
@@ -78,12 +78,12 @@ public class AuthService : IAuthService
         if (!user.IsVerified || user.Status == UserStatus.PENDING)
         {
             await _otpService.SendOtpAsync(user, OtpPurpose.Registration);
-            return new AuthResponseDto(user.Id, user.Email, RequiresOtp: true);
+            return new AuthResponseDto(user.Id, user.Email, RequiresOtp: true, OtpPurpose: OtpPurpose.Registration);
         }
 
         // Every verified login requires a login OTP — tokens are never issued here
         await _otpService.SendOtpAsync(user, OtpPurpose.Login);
-        return new AuthResponseDto(user.Id, user.Email, RequiresOtp: true);
+        return new AuthResponseDto(user.Id, user.Email, RequiresOtp: true, OtpPurpose: OtpPurpose.Login);
     }
 
     public async Task<AuthResponseDto?> VerifyOtpAsync(VerifyOtpDto dto, string? ipAddress = null)
